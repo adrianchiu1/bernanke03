@@ -1,0 +1,647 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage[expansion=false]{microtype}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage[style=authoryear,backend=biber,maxcitenames=2,maxbibnames=8,uniquename=false,uniquelist=false,giveninits=true,dashed=false]{biblatex}
+\addbibresource{references.bib}
+\setlist{nosep}
+\captionsetup{font=small,labelfont=bf}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\ib}{\bar{\imath}}
+\newcommand{\pis}{\pi^{*}}
+\newcommand{\gs}{g^{*}}
+\newcommand{\ELB}{\mathrm{ELB}}
+
+\title{A Rule-Based Path for Cash Rates\\[4pt]
+\large The error-correction framework for the US, euro area, UK and Japan:\\ rule, calibration, literature and open issues}
+\author{House research note}
+\date{November 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+The cash leg of the capital markets line needs the expected average return on cash over five and ten years for each major currency. We derive it from house forecasts of growth and inflation through a single, explicit policy rule rather than copying market forwards or surveys. The rule is a quarterly error-correction form of an inertial Taylor rule: each quarter the policy rate closes a share $\lambda$ of the gap to a target equal to a stated long-run anchor plus responses to projected inflation and to growth relative to potential, and carries forward a share $\rho$ of last quarter's change. The same equation is used for the Federal Reserve, the ECB, the Bank of England and, provisionally, the Bank of Japan; only the calibration differs. This note sets out the rule term by term, the evidence behind each calibration, and three design choices that the companion interactive labs leave to judgement: the starting-stance term $s_0$, the forecast horizons $k_\pi$ and $k_g$, and the inflation measure and the core-versus-headline weight $\theta$. It documents what each central bank actually targets and monitors, including the Bank of Japan's family of ``core'' indices, and closes with the sensitivities that matter for five- and ten-year averages and a list of proposed changes.
+\end{abstract}
+
+\tableofcontents
+
+\section{Purpose and summary}
+\label{sec:purpose}
+
+Three shortcuts for the expected cash return are available and all are weak. Market forwards embed time-varying money-market and term premia that cannot be separated cleanly from expectations \parencite{ferrero2009}. Survey and market expectations of the short rate make large, cyclical errors \parencite{cieslak2018}. Both also leave no room for a house view: if the house expects a different growth and inflation path from consensus, the cash assumption should move with it. A path derived from house forecasts avoids these problems provided the mapping from forecasts to rates is explicit, grounded in evidence on how each central bank has behaved, and robust to the quantities nobody observes well in real time.
+
+Four requirements follow. The path must start from where the central bank is today. It must respond to growth and inflation the way the bank has historically responded. It must converge to a stated long-run rate. And it must be reproducible under any alternative path for growth, headline and core inflation, so that scenarios can be compared.
+
+The framework meets these with one equation. Section~\ref{sec:rule} states it and explains each term. Section~\ref{sec:calib} gives the calibration for the four markets and the evidence behind it. Sections~\ref{sec:stance}, \ref{sec:leads} and \ref{sec:theta} take the three judgemental terms in turn. Section~\ref{sec:measures} surveys the inflation measures each central bank targets and monitors. Section~\ref{sec:results} reports results and sensitivities. Section~\ref{sec:issues} lists open issues and proposed changes.
+
+\paragraph{Headline findings.}
+\begin{itemize}
+\item On the house baselines the ten-year average cash rate sits 10 to 15 basis points above the long-run anchor in each market. The anchor is by far the most important input: half a point on the anchor moves the ten-year average by 43 to 50 basis points.
+\item Among the dynamic terms, the inflation response matters most for the two-year average, the adjustment speed $\lambda$ matters for the five-year average in the euro area and UK, and momentum $\rho$ barely matters for any average.
+\item The starting-stance term $s_0$ is switched off in every default. If it is switched on, it is the most powerful single knob in the framework for the horizon averages: a half-point stance gap moves the five-year average by about 20 basis points, more than switching the whole inflation response off. It should not be used without appearing in the sensitivity tables.
+\item The forecast horizons matter a great deal where inflation is projected to fall. Moving the ECB rule from a four-quarter to a contemporaneous inflation read raises the two-year average by 51 basis points.
+\item The core-versus-headline weight $\theta$ is the largest near-term judgement in the US, where headline and core CPI are 1.1 points apart, and in Japan. It is immaterial in the euro area and UK baselines because the house projects headline and core converging together.
+\end{itemize}
+
+\section{The rule}
+\label{sec:rule}
+
+\subsection{Equation}
+
+Quarterly, with all rates in annual per cent and inflation and growth as four-quarter (year-on-year) rates:
+\begin{align}
+\Delta i_t &= \rho\,\Delta i_{t-1}
+  + \lambda\Big[(\ib - i_{t-1}) + (1+\varphi_\pi)\big(\pi_{t+k_\pi} - \pis\big)
+  + \varphi_g\big(g_{t+k_g} - \gs_{t+k_g}\big) + s_0\, 2^{-t/h}\Big]
+  \label{eq:rule}\\
+\pi_{t} &= \mathrm{core}_{t} + (1-\theta)\big(\mathrm{headline}_{t} - \mathrm{core}_{t}\big)
+  \label{eq:pi}\\
+i^{\mathrm{impl}}_t &= \mathrm{grid}(i_t) \ \ge\ \ELB
+  \label{eq:impl}
+\end{align}
+
+Here $i_t$ is the continuous ``intended'' policy rate, $\ib$ the long-run nominal anchor, $\pis$ long-run inflation in the measure the rule responds to, $\gs$ potential growth, and $i^{\mathrm{impl}}_t$ the rate actually implemented. Equation~\eqref{eq:rule} is the error-correction form of an inertial Taylor rule \parencite{judd1998}. It is identical in the four market labs; only the parameters differ.
+
+\subsection{Each term}
+
+\paragraph{Error correction, $\lambda(\ib - i_{t-1})$.}
+Each quarter the rate closes a share $\lambda$ of the gap between last quarter's rate and the target. With gaps closed the target is the anchor, so $\lambda$ is the speed of mean reversion to $\ib$. It maps to the smoothing coefficient $s$ in estimated partial-adjustment rules by $\lambda = 1-s$; a two-lag rule with coefficients $s_1, s_2$ maps to $\lambda = 1 - s_1 - s_2$ and $\rho = -s_2$.
+
+\paragraph{Momentum, $\rho\,\Delta i_{t-1}$.}
+A share of last quarter's change carries into this quarter. This is the ``second lag'' in two-lag estimates \parencite{judd1998,coibion2012}. Note that in the implementation the momentum term operates on the \emph{notional} change $\Delta i_{t-1}$, not on the implemented 25bp move, so the grid does not feed back into the dynamics.
+
+\paragraph{Inflation response, $\lambda(1+\varphi_\pi)(\pi_{t+k_\pi}-\pis)$.}
+The long-run response of the rate to a persistent one-point inflation gap is $1+\varphi_\pi$. Writing it this way builds in the Taylor principle: $\varphi_\pi > 0$ means the real rate rises when inflation rises. The code precomputes $\alpha = \lambda(1+\varphi_\pi)$ as the quarterly impact coefficient. The inflation measure $\pi$ is read $k_\pi$ quarters ahead on the house path (Section~\ref{sec:leads}) and is a $\theta$-weighted blend of core and headline (Section~\ref{sec:theta}).
+
+\paragraph{Growth response, $\lambda\varphi_g(g_{t+k_g}-\gs)$.}
+The activity variable is growth relative to potential growth, not the level of the output gap. The reason is real-time measurement. Output-gap levels are revised by amounts comparable to their cyclical variation, and rules that respond to them transmit that error into policy; difference rules are robust to it \parencite{orphanides2001,orphanideswilliams2002,walsh2003}. The price is that a growth rule has no level information, which is why the framework needs an explicit anchor. The quarterly impact coefficient is $\beta = \lambda\varphi_g$. Evidence on $\varphi_g$ is the thinnest in the framework for every market.
+
+\paragraph{Starting stance, $\lambda s_0 2^{-t/h}$.}
+An optional judgemental term that lets the near-term target follow the central bank's own view where it differs from the house target, decaying with half-life $h$ quarters. It is zero in all defaults. Section~\ref{sec:stance} discusses it.
+
+\paragraph{Implementation, $\mathrm{grid}(\cdot)\ge\ELB$.}
+The intended rate is snapped to a 25bp grid of implementable rates (range midpoints for the Fed, policy rates for the others), moving only when the intended rate is more than half a step plus a small dead band away from the current implemented rate, and at most 25bp per scheduled meeting. The number of remaining meetings in the first quarter and per quarter thereafter is a parameter. The effective lower bound is applied to the implemented rate while the intended rate is allowed to go below it, so the rule remembers how far policy ``would have'' gone and lifts off later, a simple make-up feature in the spirit of \textcite{reifschneider2000}. The discreteness of policy moves and the dynamics of their timing are documented by \textcite{hamiltonjorda2002}.
+
+\subsection{Steady state and dynamics}
+
+In steady state the rate equals $\ib + (1+\varphi_\pi)(\pi-\pis) + \varphi_g(g-\gs)$, so persistent gaps move the long-run rate and the anchor is reached only when inflation and growth settle at their long-run values. Beyond the last forecast year the labs close inflation and growth gaps with a one-year half-life, so the path reaches the anchor within two to three years of the last forecast.
+
+With gaps closed, a deviation $x_t$ from the anchor follows
+\begin{equation}
+x_t = (1+\rho-\lambda)\,x_{t-1} - \rho\,x_{t-2}.
+\label{eq:dyn}
+\end{equation}
+The characteristic roots are complex when $(1+\rho-\lambda)^2 < 4\rho$, in which case the path overshoots slightly. At the US calibration ($\lambda=0.20$, $\rho=0.40$) the deviation halves in about three quarters with a small overshoot; at the ECB calibration ($\rho=0$) it decays geometrically at $0.83$ a quarter with no overshoot.
+
+\subsection{Inputs and conventions}
+
+House forecasts arrive as calendar-year averages of year-on-year rates (the Consensus Economics and Survey of Professional Forecasters convention). The labs convert them to a smooth quarterly year-on-year path that reproduces the annual averages exactly, respects the quarters already observed in the current year, and decays toward long-run values beyond the forecast horizon. Where no house core forecast exists, a monthly CPI builder decomposes headline into core, food and energy momentum so that base effects are explicit. The leads $k_\pi$ and $k_g$ are then read off this quarterly path (Section~\ref{sec:leads}).
+
+\section{Calibration by market}
+\label{sec:calib}
+
+Table~\ref{tab:calib} gives the central calibration for the four markets. The US, euro area and UK values are those in the interactive labs; the Japan column is a provisional calibration proposed in this note (Section~\ref{sec:japan}), not yet implemented in a lab. The evidence behind each parameter is summarised in the paragraphs that follow and tabulated study by study in Appendix~\ref{app:evidence}.
+
+\begin{table}[htbp]
+\centering\footnotesize
+\caption{Central calibration, with evidence ranges in brackets}
+\label{tab:calib}
+\setlength\tabcolsep{4pt}
+\begin{tabular}{@{}L{34mm}L{27mm}L{27mm}L{27mm}L{31mm}@{}}
+\toprule
+ & US (Fed) & Euro area (ECB) & UK (BoE) & Japan (BoJ, provisional) \\
+\midrule
+Policy rate & Funds target range midpoint & Deposit facility rate & Bank Rate & Uncollateralised overnight call rate \\
+Start, 2026Q3 & 3.875 (last $\Delta$ +25) & 2.50 (+25) & 3.75 (0) & 1.25 (+25) \\
+Anchor $\ib$ & 3.875 & 2.00 & 3.00 & 1.75 \\
+$\pis$ (measure) & 2.6 (CPI) & 2.0 (HICP) & 2.3 (CPI) & 2.0 (CPI less fresh food and energy) \\
+$\gs$ & 2.1 & 1.0 (Germany) & 1.2 & 0.6 \\
+$\lambda$ & 0.20 [0.15--0.30] & 0.17 [0.07--0.25] & 0.20 [0.10--0.40] & 0.20 [0.10--0.30] \\
+$\rho$ & 0.40 [0.25--0.45] & 0 [0--0.25] & 0.20 [0--0.50] & 0 [0--0.30] \\
+$1+\varphi_\pi$ & 1.5 [1.3--2.2] & 3.0 [1.4--4.5] & 1.5 [1.2--2.1] & 1.5 [1.0--2.0] \\
+$\varphi_g$ & 0.75 [0.4--1.1] & 1.4 [0.8--1.7] & 0.75 [0.4--1.1] & 0.75 [0.3--1.1] \\
+$\theta$ & 1 (core) & 0 (headline) & 0 (headline) & 1 (less fresh food and energy) \\
+$k_\pi, k_g$ (quarters) & 0, 0 & 4, 2 [2--6, 1--3] & 4, 1 [3--5, 0--2] & 4, 2 \\
+ELB & 0.125 & $-0.50$ & 0.10 & $-0.10$ \\
+Meetings left in first quarter; per quarter after & 1; 2 & 1; 2 & 2; 2 & 1; 2 \\
+$s_0$, $h$ & 0, 6 & 0, 6 & 0, 6 & 0, 6 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{United States}
+
+\emph{Adjustment speed and momentum.} Estimated one-lag smoothing coefficients for the Greenspan and post-Greenspan Fed lie between 0.72 and 0.85 a quarter, implying $\lambda$ of 0.15--0.28 \parencite{english2003,rudebusch2006,carvalho2021}. \textcite{judd1998}, whose error-correction specification is exactly ours, find $\lambda=0.28$ and $\rho=0.42$ for 1987--97. \textcite{coibion2012}, on Greenbook forecasts, find two-lag coefficients of 1.22 and $-0.40$, which map to $\lambda=0.18$ and $\rho=0.40$, and conclude the evidence strongly favours genuine smoothing over serially correlated shocks. \textcite{rudebusch2002} argues from the term structure that smoothing this large should make rate changes more predictable than they are; \textcite{lansing2002} shows real-time mismeasurement of trend output can generate spurious smoothing of 0.3--0.4. We take $\lambda=0.20$, $\rho=0.40$, and set the range wide enough to include the faster adjustment the sceptics imply. Section~\ref{sec:results} shows the dispute matters little for five- and ten-year averages.
+
+\emph{Inflation and growth responses.} The long-run inflation response is 1.5 in \textcite{taylor1993} and in the Board's reference rules \parencite{fedrules2018}; single-equation estimates since 1987 give 1.33--1.60; forward-looking and model-based estimates give 2.0--2.2 \parencite{cgg2000,coibion2012,smetswouters2007}. We take 1.5. For growth, the Board's first-difference rule puts 0.1 a quarter on four-quarter GDP growth relative to potential, about 0.5 in long-run units at $\lambda=0.2$; Coibion and Gorodnichenko's one-lag growth response of 0.18 implies about 1.0 long-run. We take 0.75.
+
+\emph{Anchor and inflation measure.} The long-run funds rate is a house input. A point anchor of 3.75\% is the boundary between two target ranges, so a stepped path settles in whichever range it approaches from and long-run averages come to depend on the direction of approach; the anchor is therefore expressed as the 3.75--4.00\% range with midpoint 3.875. Long-run CPI inflation of 2.6\% is consistent with the Fed's 2\% PCE objective plus the historical CPI--PCE wedge (Section~\ref{sec:measures}). The rule responds to core CPI ($\theta=1$).
+
+\subsection{Euro area}
+
+The euro-area evidence differs from the US in three ways, and the calibration follows it. First, the ECB is described well by a rule on \emph{expected} inflation and poorly by one on current inflation: \textcite{gerdesmeier2004} estimate a response of 0.39 to current inflation, which fails the Taylor principle, against 1.31 on SPF forecasts twelve months ahead and 2.91 at 24 months; \textcite{sauersturm2007} and \textcite{gorter2008} reach the same conclusion. The most careful real-time estimate, \textcite{paloviita2021} on Eurosystem staff projections for 1999--2014, finds smoothing of 0.84, a long-run response of 4.45 to inflation projected four quarters ahead and 1.48 to projected growth. Model-based responses are lower: 2.75--2.93 in the New Area-Wide Model II \parencite{coenen2018,darracq2026} and 1.68 in \textcite{smetswouters2003}. We take $1+\varphi_\pi=3.0$ with a range of 1.4--4.5.
+
+Second, the euro-area evidence favours growth over the output-gap level more clearly than the US evidence does. \textcite{gerlach2007} finds expected growth and sentiment significant and the gap insignificant. \textcite{orphanideswieland2013} show a first-difference rule with 0.5 on the SPF inflation gap and 0.5 on forecast growth less potential ``similar to the evolution of actual ECB policy'', and \textcite{hartmannsmets2018} estimate coefficients ``somewhat smaller than, but not significantly different from 0.5'' on staff projections. The long-run growth response is about 1.4.
+
+Third, there is no momentum. The lagged change is negative or insignificant in \textcite{gerlachlewis2014} and \textcite{gerlach2007}, so $\rho=0$. Real-time smoothing of 0.77--0.84 gives $\lambda$ of 0.16--0.23; we take 0.17. The anchor is a house input of 2.0\% with long-run HICP of 2.0\%, implying a zero long-run real rate, in the middle of the ECB staff range for nominal $r^*$ of 1\textonequarter--2\textonequarter\%. The rule responds to headline HICP ($\theta=0$) because that is what every estimated ECB rule uses; the core-reactive variant is a scenario. The house activity input is German real GDP, because that is how the house models are set up, with German potential growth of 1.0\%.
+
+\subsection{United Kingdom}
+
+The UK evidence base is shorter and almost entirely pre-2007, because Bank Rate sat at or near its floor from 2009 to 2021. Since 1992 the inflation response clusters around 1.5: \textcite{nelson2000} 1.27, \textcite{martinmilas2004} 1.45--1.65, \textcite{boinetmartin2008} 1.71, COMPASS 1.4 \parencite{burgess2013}, and the Bank's illustrative rules 1.5 \parencite{boe2025mpr}. Two qualifications matter now. Several studies find the response is nonlinear, biting harder when inflation leaves a zone around target \parencite{martinmilas2004,tayloredavradakis2006}, so a linear rule understates the response to a large overshoot. And \textcite{martinmilas2013} find the response falls sharply after 2007.
+
+UK estimates mostly use output-gap levels; growth evidence is thin. \textcite{goodhart2005} finds forecast growth insignificant; \textcite{cobhamkang2013} find a quarterly response of 0.17--0.19 to forecast growth in first differences; \textcite{cloyne2016} find a significant response to growth one quarter ahead. We use the US value $\varphi_g=0.75$, a quarterly impact of 0.15, between the Bank's 0.1 and Cobham and Kang's 0.17--0.19.
+
+Smoothing estimates imply $\lambda$ of 0.11--0.37; we take 0.20. Momentum is where the UK evidence conflicts: the one two-lag estimate implies 0.50 \parencite{boinetmartin2008}, while forecast-based studies find the lagged change insignificant \parencite{goodhart2005,cobhamkang2013,cloyne2016}, and \textcite{cobham2003} argues much of the apparent smoothing is serially correlated shocks. We set $\rho=0.20$ between the two classes. The anchor is 3.0\% with long-run CPI of 2.3\%, inside the MPC's stated neutral range of 2--4\%. All UK estimates use headline RPI, RPIX or CPI, so $\theta=0$.
+
+\subsection{Japan (provisional)}
+\label{sec:japan}
+
+There is no Bank of Japan lab yet. The calibration below is proposed so that the four markets can be run on a common footing; it should be treated as a starting point for the house economists rather than a finished estimate.
+
+\emph{Why Japan is harder.} The policy rate was at or below zero from 1999 to 2024 with brief exceptions, so a conventional reaction function cannot be estimated on most of the available history, and \textcite{kuttnerposen2004} and \textcite{itomishkin2004} are sceptical that estimated Taylor rules say much about Japanese policy at all. \textcite{nakamurasteinsson2025} note the Taylor-rule fit is particularly poor for Japan. What evidence there is comes from four sources.
+\begin{itemize}
+\item \textcite{jinushi2000} estimate a ``good'' rule on 1975--85 with a lagged dependent variable. Their basic GMM specification gives $\gamma=0.39$ on the lagged rate, hence $\lambda\approx0.6$, and long-run responses of about 0.45 to the inflation gap and 1.9 to the output gap. Their OLS variants give $\gamma=0.65$--$0.66$ ($\lambda\approx0.35$) with long-run responses of about 0.5 and 2.0. The inflation response fails the Taylor principle, but the sample predates the modern framework. Applying the rule forward, they document delayed policy actions in 1987--88, 1992--95 and 1997--98.
+\item \textcite{itomishkin2004} estimate static rules on 1982--94 with a 2\% target. Backward-looking: inflation response 1.47 on the GDP deflator and 1.75 on CPI ex fresh food, with gap responses of 0.21 and 0.31. Forward-looking: 1.23 and 1.71, with the gap insignificant.
+\item \textcite{hayashikoeda2019} estimate a censored Taylor rule with an explicit exit condition on 1992--2012. The speed of adjustment is 7.8\% a month, about 0.22 a quarter; the inflation and output coefficients in the desired rate are 1.01 and 0.04. A Tobit estimate without the exit condition gives a lower speed, 3.8\% a month, because it misreads the QE exit condition as smoothing.
+\item \textcite{haba2026}, BoJ staff, estimate the reaction function \emph{as perceived by market participants} from the QUICK survey for 2004--2025. The inflation coefficient is near zero while the rate is at the lower bound, rises during the 2006--07 tightening, and rose markedly after yield-curve control was loosened in July and October 2023. The specification has no activity term and no smoothing, so it is informative on direction, not on our parameters.
+\end{itemize}
+\textcite{cgg1998} also estimate a forward-looking rule for the Bank of Japan over 1979--94 with a monthly smoothing coefficient above 0.9 and an inflation response around 2; we cite it for completeness and have not re-verified the published table.
+
+\emph{Proposed values.} The current BoJ communicates a forward-looking, gradual normalisation: ``the Bank will continue to raise the policy interest rate and adjust the degree of monetary accommodation, in response to developments in economic activity and prices'', and ``will consider the timing and pace of adjustment'' \parencite{bojoutlook2026}. Its forecasts are published at a fiscal-year horizon of two to three years, and its underlying-inflation framing is explicitly medium-term \parencite{bojreview2026}. That argues for forecast leads like the ECB's ($k_\pi=4$, $k_g=2$), no momentum ($\rho=0$), and an adjustment speed of about 0.2 (Hayashi--Koeda's 0.22; Jinushi et al.\ faster, but on a very different regime). For the inflation response we take the Taylor-principle value 1.5 with a range of 1.0--2.0, bracketed by Hayashi--Koeda (1.0) and Ito--Mishkin (1.7). For growth we use the US value 0.75 with a wide range; the only direct evidence is on gap levels. The anchor is the midpoint of the BoJ's own nominal neutral range of 1.1--2.5\% (real $-0.9$ to $+0.5$ plus 2\% inflation), rounded to the grid at 1.75\%; board member Takata has argued the neutral rate may sit higher. Potential growth is 0.6\%, inside the BoJ's ``around 0.5--1.0 percent'' \parencite{bojoutlook2026}. The ELB is set at $-0.10$, the 2016--24 negative-rate level. The rule responds to CPI less fresh food and energy ($\theta=1$, Section~\ref{sec:measures}) with $\pis=2.0$; the ex-fresh-food-reactive variant is a scenario.
+
+\emph{Inputs.} Pending house forecasts for Japan, the illustrative baseline uses the October 2026 Outlook Report medians \parencite{bojoutlook2026}: real GDP 0.7, 0.7, 0.8 for fiscal 2026--28; CPI less fresh food 2.5, 2.6, 2.0; CPI less fresh food and energy 2.4, 2.7, 2.3. Fiscal years are mapped approximately to calendar years. Two caveats. The forecasts exclude the proposed temporary cut in consumption tax on food, which the BoJ estimates would lower fiscal-2027 inflation by about 1.3 points on both measures; the BoJ treats such ``institutional factors'' as noise to be looked through, and the rule should do the same by using the BoJ's institutional-factor-adjusted series. And the starting point is a rate of 1.25\% set in September 2026 and held on 30 October by 8--1, with the dissent for 1.50 \parencite{bojstatement2026}.
+
+\section{The starting-stance term \texorpdfstring{$s_0$}{s0}}
+\label{sec:stance}
+
+\subsection{Rationale}
+
+The rule closes the gap between today's rate and \emph{our} target, which is the house anchor plus the inflation and growth responses. The central bank's own near-term target can differ from ours for reasons the rule does not capture: it may be responding to an output-gap level we have deliberately dropped, to financial conditions, to the exchange rate, to a risk-management judgement, or simply to a different reading of the same data. If so, a rule that ignores the bank's view will mis-time the first year or two of the path even if its long-run behaviour is right.
+
+The stance term lets the near-term target follow the central bank's view and decay geometrically toward ours with half-life $h$ quarters. It enters inside the $\lambda$ bracket, so the contribution to the quarterly change is $\lambda s_0 2^{-t/h}$. It can be estimated by inverting the central bank's own projected path through the rule: the residual between the rate path implied by the FOMC's Summary of Economic Projections (or the ECB staff projection conditioning path, the MPC's market-implied path, or the BoJ Outlook Report's reference to market views) and the rule's path, read at the start, is $s_0$. It is set to zero in all four calibrations because, at the time of the October 2026 forecast round, the official projections and the house baselines were close.
+
+\subsection{Literature}
+
+No reaction-function study estimates a term of this form, and we would not expect one. The nearest relatives are the serially correlated policy shock in \textcite{rudebusch2002} and \textcite{english2003}, which also decays geometrically and is also interpreted as the central bank responding to something outside the rule, and the time-varying intercept in \textcite{gonzalez2023}, who estimate the FOMC median participant's rule on SEP releases and find the intercept and persistence drifting over 2012--23. \textcite{bauerpflueger2024} show that the rule \emph{perceived} by forecasters moves with the Fed's actions, so a gap between the bank's communicated path and a fixed rule is a recurring feature of the data rather than an anomaly. The stance term is best understood as a judgemental add-factor of the kind every forecasting shop uses, made explicit and forced to decay.
+
+\subsection{Mechanics and a warning}
+
+The term is more potent than its description as a ``decaying target gap'' suggests. The cumulative change it injects into the rate is
+\begin{equation}
+\sum_{t\ge0}\lambda s_0 2^{-t/h} = \frac{\lambda s_0}{1-2^{-1/h}},
+\end{equation}
+which at $\lambda=0.20$ and $h=6$ is $1.82\,s_0$. A ``half-point'' stance gap therefore pushes about 0.9 points of cumulative tightening into the path, which the anchor pull then has to unwind. The peak deviation of the intended path from baseline for $s_0=0.5$ is about 0.35 points in the US, reached around 2027Q4, and the long tail of the unwind is what moves the horizon averages. Table~\ref{tab:stance} shows the effect on the US, euro-area, UK and Japan baselines.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Effect of the stance term on horizon averages, percentage points relative to the house baseline}
+\label{tab:stance}
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+Setting & Market & 2y & 5y & 10y \\
+\midrule
+$s_0=+0.25$, $h=6$ & US & 0.19 & 0.10 & 0.05 \\
+ & Euro area & 0.13 & 0.13 & 0.06 \\
+ & UK & 0.22 & 0.13 & 0.06 \\
+$s_0=+0.50$, $h=6$ & US & 0.29 & 0.22 & 0.11 \\
+ & Euro area & 0.19 & 0.20 & 0.11 \\
+ & UK & 0.26 & 0.23 & 0.12 \\
+ & Japan & 0.19 & 0.20 & 0.11 \\
+$s_0=-0.50$, $h=6$ & US & $-0.26$ & $-0.13$ & $-0.06$ \\
+ & Euro area & $-0.22$ & $-0.15$ & $-0.08$ \\
+ & UK & $-0.22$ & $-0.13$ & $-0.06$ \\
+ & Japan & $-0.22$ & $-0.14$ & $-0.07$ \\
+$s_0=+0.50$, $h=3$ & US & 0.23 & 0.12 & 0.06 \\
+$s_0=+0.50$, $h=12$ & US & 0.35 & 0.32 & 0.23 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For comparison, switching the entire inflation response off moves the US five-year average by $-0.09$, and moving $\lambda$ across its whole evidence range moves it by 0.01. A half-point stance gap is therefore the largest single term in the first year in every market, roughly double the pull to anchor and the inflation response, and it is the most powerful dynamic knob for the five-year average. The half-life matters almost as much as $s_0$ itself: at $h=12$ the term rivals the anchor as a driver of the ten-year number.
+
+\subsection{When it is useful}
+
+\begin{enumerate}
+\item \emph{A documented gap between the official path and the house baseline.} The natural case. The FOMC's SEP median, the MPC's conditioning path or the BoJ's reference to market pricing sits visibly above or below the rule's first two years, and the house does not want to argue that the committee is wrong about its own near-term intentions. Set $s_0$ by inversion, keep $h$ at the default, and report the result in the sensitivity table.
+\item \emph{A regime the rule does not describe.} A central bank responding to something outside the rule for a limited period: a financial-stability episode, an exchange-rate defence, an explicit forward-guidance commitment to hold. A negative $s_0$ with a short half-life captures a committed hold that the data would otherwise end.
+\item \emph{Lower-bound exits.} The term can represent a deliberate make-up strategy or a committee's stated intention to normalise faster or slower than the rule.
+\end{enumerate}
+
+It is \emph{not} useful for correcting a persistent disagreement about the anchor or the inflation response. If the official path is systematically above the rule for years, the anchor or $\varphi_\pi$ is wrong, and adjusting $s_0$ hides that.
+
+\subsection{Recommendations}
+
+\begin{itemize}
+\item Keep the default at zero. Any non-zero $s_0$ must appear in the sensitivity tables alongside $\theta$.
+\item Document the cumulative multiplier $\lambda/(1-2^{-1/h})$ in the labs, or renormalise the term so that $s_0$ \emph{is} the cumulative change, which is what a user reading ``half a point of stance'' will assume.
+\item Add to the ECB and BoE notes the one paragraph on $s_0$ that the US note has; both carry the term in the equation and the chart legend without explanation.
+\item Consider a half-life tied to the central bank's own forecast horizon (four to eight quarters) rather than a fixed six.
+\end{itemize}
+
+\section{Forecast horizons \texorpdfstring{$k_\pi$ and $k_g$}{k\_pi and k\_g}}
+\label{sec:leads}
+
+\subsection{What the leads are}
+
+At date $t$ the rule reads the inflation series at quarter $t+k_\pi$ and the growth series at quarter $t+k_g$ on the house path. These are point picks, not averages over the next $k$ quarters. But each point on the series is itself a four-quarter rate. The year-on-year inflation rate at $t+4$ is the price change from $t$ to $t+4$, which is exactly the inflation that will occur over the coming year, so with $k_\pi=4$ the rule responds to projected one-year-ahead inflation in the sense every forecast-based reaction function uses. With $k_g=2$ the four-quarter growth rate at $t+2$ covers the window from $t-2$ to $t+2$, two observed quarters and two projected, so it is a nowcast-plus-near-forecast of activity rather than a forward average. Leads are clamped at the end of the horizon; by then inputs have converged to long-run values, so the clamp is harmless.
+
+\subsection{Why lead inflation at all}
+
+Three reasons, in descending order of importance.
+
+\emph{Transmission lags.} Policy affects inflation with a lag of four to eight quarters, so a central bank that cares about inflation at the horizon it can influence must respond to the forecast, not the print. This is the premise of inflation-forecast targeting and of the forward-looking rule in \textcite{cgg1998,cgg2000}.
+
+\emph{Fit.} For the ECB and the BoE the data choose the forward-looking specification decisively. The ECB fails the Taylor principle on current inflation and satisfies it on forecasts (Section~\ref{sec:calib}). For the UK the horizon that fits best is three to four quarters in GMM estimates \parencite{cobhamkang2013}; the Bank's own illustrative rules use three and five quarters \parencite{boe2025mpr}. Studies using the Bank's published forecasts find seven to eight quarters, but those coefficients are inflated because the Bank's forecasts are conditioned on market rates and already embed the expected policy response \parencite{goodhart2005}.
+
+\emph{Looking through.} A forecast-based rule looks through a transitory shock automatically if the forecast does, so part of the core-versus-headline question in Section~\ref{sec:theta} is absorbed by $k_\pi$. The ECB note makes this explicit: the lead looks through energy only if the house forecast does.
+
+\subsection{Why $k_g$ is shorter than $k_\pi$, and why not four}
+
+The question of why the growth lead is not also four quarters has three answers.
+
+\emph{The evidence says so.} In every forecast-based estimate for the euro area the activity variable enters at one to three quarters ahead while inflation enters at three to four \parencite{paloviita2021,gorter2008,hartmannsmets2018}. \textcite{cloyne2016} find the MPC responds to growth one quarter ahead and to revisions of the near-term forecast. \textcite{goodhart2005}, using the Bank's own eight-quarter growth forecasts, finds them insignificant and wrongly signed. Coibion and Gorodnichenko's growth variable is the Greenbook forecast for the current and next quarter.
+
+\emph{Growth plays a different role in the rule.} Inflation is the \emph{objective}, and the bank aims at it where it can be hit, four to eight quarters out. Growth relative to potential is an \emph{indicator} of demand pressure, a proxy for the change in the output gap. Its information is in the recent and current quarters; a four-quarter-ahead growth forecast is largely a return to potential by construction and carries little signal about today's demand pressure. Reading growth four quarters out would make the rule respond to the forecaster's mean-reversion assumption rather than to the cycle.
+
+\emph{Forecast quality.} GDP growth forecasts have essentially no skill beyond two to three quarters; inflation forecasts retain some skill at a year because inflation is more persistent. A central bank that knows this will weight near-term growth and longer-term inflation.
+
+There is also a mechanical reason not to go to four in the present framework. The growth input is already a four-quarter rate, so at $k_g=2$ it averages two observed and two projected quarters; at $k_g=4$ it would be entirely projected, and in the house conventions the projected quarters already converge to potential within the forecast year.
+
+\subsection{Comparison across markets}
+
+Table~\ref{tab:leads} compares the settings and shows what moving them does on the house baselines.
+
+\begin{table}[htbp]
+\centering\footnotesize
+\caption{Forecast horizons: settings, basis and the effect of alternatives on horizon averages (percentage points relative to each market's baseline, 2y / 5y / 10y)}
+\label{tab:leads}
+\setlength\tabcolsep{4pt}
+\begin{tabular}{@{}L{16mm}L{14mm}L{58mm}L{64mm}@{}}
+\toprule
+Market & Central ($k_\pi$, $k_g$) & Basis & Effect of alternative settings \\
+\midrule
+US & 0, 0 & None stated in the US lab. The evidence used for $\lambda$ and $\rho$ (Coibion--Gorodnichenko) is on Greenbook forecasts one to two quarters ahead & (1,1): $0.00$ / $-0.01$ / $-0.01$ \newline (2,2): $0.00$ / $-0.03$ / $-0.01$ \newline (4,4): $-0.10$ / $-0.06$ / $-0.03$ \\
+\addlinespace
+Euro area & 4, 2 & Inflation three to four quarters, growth one to three quarters ahead in all forecast-based estimates & (0,0): $+0.51$ / $+0.34$ / $+0.17$ \newline (2,2): $+0.32$ / $+0.18$ / $+0.09$ \newline (4,4): $+0.03$ / $0.00$ / $0.00$ \\
+\addlinespace
+UK & 4, 1 & GMM three to four quarters; Bank rules three and five; activity zero to two quarters & (0,0): $+0.42$ / $+0.18$ / $+0.09$ \newline (2,2): $+0.19$ / $+0.06$ / $+0.03$ \newline (4,4): $+0.10$ / $0.00$ / $0.00$ \\
+\addlinespace
+Japan & 4, 2 & Proposed, by analogy with the ECB; BoJ forecasts and communication are two to three years forward & (0,0): $+0.16$ / $+0.16$ / $+0.08$ \newline (2,2): $+0.19$ / $+0.10$ / $+0.05$ \newline (4,4): $0.00$ / $-0.03$ / $-0.01$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three things stand out. First, the leads matter most where the house projects inflation falling: reading current rather than one-year-ahead inflation raises the ECB two-year average by half a point, because the rule then responds to today's 3.3\% headline rather than the 2.5\% projected a year out. Second, the growth lead on its own is nearly irrelevant for averages; the (4,4) rows differ from the central settings only through $k_g$ and move averages by at most 10bp in the UK two-year. Third, the US zero lead is unargued. The US lab's own sources for $\lambda$ and $\rho$ use forecasts one to two quarters ahead, and \textcite{cgg2000} use one-quarter-ahead inflation. A US setting of $k_\pi=1$ or 2 with $k_g=1$ would be consistent with that evidence and would change the US averages by at most 3bp at present, because the US house path is smooth. We recommend adopting it so that the four markets are specified alike.
+
+\section{Inflation measure and the weight \texorpdfstring{$\theta$}{theta}}
+\label{sec:theta}
+
+\subsection{What $\theta$ does}
+
+Equation~\eqref{eq:pi} blends core and headline. With $\theta=1$ the rule responds to core only and looks through the entire headline--core wedge; with $\theta=0$ it responds to headline and looks through nothing. The share of the wedge the bank responds to is $1-\theta$. In quiet times the wedge is small and $\theta$ is immaterial. In an energy shock it is the largest near-term judgement in the framework: in the US, with headline CPI at 3.7\% and core at 2.6\% in September 2026, moving from $\theta=1$ to $\theta=0$ raises the two-year average by 48bp and the five-year by 17bp (Table~\ref{tab:sens}).
+
+\subsection{Theory and evidence}
+
+Theory says a central bank should stabilise inflation in the sticky-price sector rather than a broad index \parencite{aoki2001}, and should give less weight to sectors whose prices are flexible, energy chief among them \parencite{mankiwreis2003}. Empirical US reaction functions are accordingly estimated on core or deflator measures, not headline \parencite{rudebusch2006,carvalho2021}. \textcite{pflueger2025} shows that whether the central bank responds to headline or core during a supply shock, together with how reactive it is, determines whether bonds hedge equities in a stagflation.
+
+The euro-area and UK evidence is different in kind. Every estimated ECB rule uses headline HICP or its forecast; every UK estimate uses headline RPI, RPIX or CPI. That is what the banks say they target, and what their forecasts are published on. But it is a convention of the studies, not a finding that these banks ignore the composition of inflation. Both banks have, since 2021, explicitly discussed looking through energy and the risk of second-round effects. Our reading is that the headline default for the ECB and BoE is right for the \emph{measure the forecast is made on}, and that the look-through judgement should be made in the forecast itself and in $k_\pi$.
+
+\subsection{Calibrating $\theta$}
+
+There are three routes.
+
+\emph{Estimate it.} Include both core and the headline--core wedge in a reaction-function regression and read $\theta$ off their relative coefficients. We know of no published estimate for any of the four banks; the labs' Table~A1 sources would need re-estimation. The 2021--24 episode provides the first large and sustained wedge since the 1970s, so this is feasible for the US and euro area and is on the research list.
+
+\emph{Infer it from communication.} A bank that describes an energy shock as transitory and expects it to unwind is behaving like $\theta=1$; a bank that stresses second-round effects, expectations and ``appropriately forceful or persistent'' action \parencite{ecbstrategy2025} is behaving like $\theta\to0$. The BoJ's statement that it must ``keep the risk of underlying CPI inflation deviating upward'' from materialising is $\theta=1$ language with a hawkish bias on the underlying measure.
+
+\emph{Treat it as a scenario.} This is what the labs do and what we recommend as the default: a central $\theta$ chosen on the evidence above and the alternative run as a named scenario, with the wedge's effect reported in the sensitivity table. The expected path is then a probability-weighted mix of the two.
+
+\section{What each central bank targets and monitors}
+\label{sec:measures}
+
+The rule needs two things from each bank: the measure the target is defined on, which fixes $\pis$ and the ``headline'' series, and the measure the bank actually reacts to, which fixes the ``core'' series and the central $\theta$. Table~\ref{tab:measures} summarises; the text gives definitions and the current list of monitored indicators, which the banks have expanded considerably since 2021.
+
+\begin{table}[htbp]
+\centering\footnotesize
+\caption{Target measures and the measures used in the framework}
+\label{tab:measures}
+\setlength\tabcolsep{4pt}
+\begin{tabular}{@{}L{24mm}L{32mm}L{31mm}L{31mm}L{31mm}@{}}
+\toprule
+ & Fed & ECB & BoE & BoJ \\
+\midrule
+Target & 2\% PCE price index, longer run & 2\% HICP, medium term, symmetric & 2\% CPI, at all times, $\pm1$pp letter band & 2\% CPI all items, sustainable and stable \\
+Forecast / communicated on & PCE and core PCE (SEP) & HICP and HICPX (staff projections) & CPI; services CPI emphasised & CPI less fresh food; also less fresh food and energy \\
+``Headline'' in the rule & CPI & HICP & CPI & CPI less fresh food \\
+``Core'' in the rule & CPI less food and energy & HICP less energy and food (HICPX) & CPI less energy, food, alcohol and tobacco & CPI less fresh food and energy \\
+$\pis$ in the rule & 2.6 (CPI $\approx$ 2.0 PCE + wedge) & 2.0 & 2.3 (house long-run CPI) & 2.0 \\
+Central $\theta$ & 1 & 0 & 0 & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Federal Reserve}
+
+The Statement on Longer-Run Goals, as amended in August 2025, says 2\% inflation ``as measured by the annual change in the price index for personal consumption expenditures'' is most consistent with the mandate \parencite{fomc2025}. The 2025 review removed the 2020 language on shortfalls and average inflation targeting and returned to a ``balanced approach'' to departures from both goals. The SEP publishes PCE and core PCE projections.
+
+The Fed does not target CPI, but the house forecasts, the market and the inflation-linked bond market are on CPI, so the labs run on CPI with $\pis=2.6$: the 2\% PCE objective plus the historical CPI--PCE wedge of roughly 0.4--0.6 points, which arises from the formula (chained Fisher versus Laspeyres), from scope (PCE includes employer-paid health care and other third-party payments) and from weights (housing is about a third of CPI and a sixth of PCE). The wedge is not constant; it was close to zero in 2021--22 and over a point in 2023--24 because shelter weighs so differently. Users of the US rule should check that the house long-run CPI assumption is consistent with the Fed's 2\% PCE.
+
+Monitored underlying measures, published by the Reserve Banks:
+\begin{itemize}
+\item \emph{Core PCE} and \emph{core CPI}: all items less food and energy. The exclusion measures used in nearly every estimated US rule.
+\item \emph{Trimmed Mean PCE} (Dallas Fed): excludes the lowest 24\% and highest 31\% of the weighted distribution of component price changes each month \parencite{dolmas2005}. Dallas staff argue it tracks trend inflation better and is revised less than core PCE. September 2026: 2.3\% against 3.1\% for core PCE.
+\item \emph{Median CPI} and \emph{16\% Trimmed-Mean CPI} (Cleveland Fed): the price change of the component at the weighted median, and the mean after removing 8\% from each tail \parencite{bryancecchetti1994}.
+\item \emph{Sticky-Price CPI} (Atlanta Fed): built from CPI components whose prices change infrequently, argued to embed expectations \parencite{brysonbuchanan2010}; a flexible-price complement is also published.
+\item \emph{Multivariate Core Trend} (New York Fed): a dynamic factor model on the seventeen core PCE sectors that separates common and sector-specific trend from transitory components \parencite{nyfedmct}.
+\item \emph{Market-based PCE}: excludes imputed prices, used in Board staff analysis.
+\end{itemize}
+For the rule the relevant point is that the FOMC's own communication since 2022 has leaned on core PCE and, at times, on ``supercore'' services ex housing. The core default $\theta=1$ follows.
+
+\subsection{European Central Bank}
+
+The 2021 strategy, confirmed in the 2025 assessment, targets 2\% HICP inflation over the medium term, symmetric, with ``appropriately forceful or persistent'' action against large, sustained deviations in either direction \parencite{ecbstrategy2025}. The target measure is headline HICP. Staff projections are published for HICP and HICPX.
+
+The ECB's set of underlying measures is the most elaborate of the four \parencite{ecbunderlying2018,banbura2023,ecbunderlying2026}:
+\begin{itemize}
+\item \emph{HICPX}: HICP excluding energy and food. The workhorse, used in projections and the press conference.
+\item \emph{HICPXX}: HICPX also excluding travel-related items, clothing and footwear, whose prices are distorted by calendar and sales effects.
+\item \emph{10\% and 30\% trimmed means} and the \emph{weighted median}, computed on year-on-year changes of the ECOICOP sub-indices. The 2026 reclassification to the new ECOICOP revised the weighted median most.
+\item \emph{Supercore}: the HICPX items whose inflation is sensitive to the output gap, selected by whether the gap improves their forecast.
+\item \emph{PCCI} and \emph{PCCIX}: the Persistent and Common Component of Inflation, a dynamic factor model on about a thousand HICP sub-items across twelve countries that removes cycles shorter than three years; the X variant restricts to HICPX items. ECB staff find the PCCI has the best predictive power for headline inflation at the medium-term horizon.
+\item \emph{Domestic inflation}: HICPX items with low import content, about 97\% services, used since 2023 to gauge domestically generated pressure.
+\end{itemize}
+The ECB's own conclusion is that ``no single measure emerges as optimal across all criteria'' and that a range should be monitored. For the rule, HICP headline is the forecast measure and HICPX the core.
+
+\subsection{Bank of England}
+
+The remit sets a 2\% target for twelve-month CPI inflation, to be met ``at all times'', with an open letter required if inflation departs by more than a point. CPI replaced RPIX (at 2.5\%) in December 2003; RPIX had been the target since 1992. CPI is methodologically the UK's HICP. CPIH, which adds owner-occupiers' housing costs and council tax, has been the ONS's lead measure since 2017 but is not the target; RPI has lost national-statistic status and is to be aligned with CPIH from 2030, which matters for index-linked gilts but not for policy.
+
+Monitored measures:
+\begin{itemize}
+\item \emph{Core CPI}: CPI excluding energy, food, alcohol and tobacco, the ONS's standard ``core'' among thirteen exclusion-based series it publishes \parencite{ons2022core}. September 2026: 2.8\%.
+\item \emph{Services CPI}: the component the MPC leans on most for domestic persistence. September 2026: 3.7\%.
+\item \emph{Services excluding indexed and volatile components, rents and foreign holidays}: the Bank's preferred underlying services measure in the Monetary Policy Report, with the component list published alongside \parencite{boe2026mpr}.
+\item \emph{Trimmed mean and median CPI}, published by Bank staff, and measures of \emph{persistence} drawn from a suite of models.
+\end{itemize}
+All UK reaction-function estimates are on headline RPI, RPIX or CPI (Appendix~\ref{app:evidence}), so the rule reads headline CPI. The core series in the lab is the ONS core measure. The house long-run CPI of 2.3\% rather than 2.0\% reflects a judgement that UK inflation has averaged above target, and it is the reason the UK inflation term is nearly inert on the baseline (Section~\ref{sec:results}).
+
+\subsection{Bank of Japan}
+
+The price stability target, introduced in January 2013, is 2\% in terms of the year-on-year change in the CPI \emph{for all items} \parencite{boj2013target,bojreview2026}. This is often misunderstood because the BoJ almost never discusses all-items CPI. Its Policy Board forecasts, its policy statements and its assessment of progress are all expressed on \emph{CPI excluding fresh food}, which Japanese convention calls ``core'' and which is the operational measure for the forecast. Since the 2014--15 oil shock the Bank has also published and emphasised \emph{CPI excluding fresh food and energy}, called ``core-core'' in Japan, and in its October 2026 Outlook Report gives forecasts for both \parencite{bojoutlook2026}. The ``Western core'' (all items less food and energy) is compiled by the Ministry of Internal Affairs and Communications but is used less, because food is a large weight in the Japanese basket and the BoJ argues that recent food inflation reflects labour and distribution costs rather than supply noise \parencite{bojreview2026}.
+
+The BoJ's framework for ``underlying inflation'', set out in March 2026, uses three sets of indicators \parencite{bojreview2026}:
+\begin{enumerate}
+\item \emph{Exclusion measures}: CPI less fresh food; less fresh food and energy; less food and energy. Since March 2026 each is also published \emph{excluding institutional factors}: consumption-tax changes, free education and school lunches, the 2021 mobile-phone charge cut, travel subsidies, and energy-burden relief (gasoline, electricity, gas subsidies). These adjusted series are the ones the Bank now charts in the Outlook Report.
+\item \emph{Distribution-based measures}: the \emph{10\% trimmed mean}, the \emph{weighted median}, the \emph{mode} of the cross-sectional distribution of item-level price changes, and a \emph{diffusion index} of rising minus falling items. \textcite{hogen2015} find the exclusion measures track the output gap closely while the mode and weighted median are much more weakly linked to it, which is why the Bank treats the latter as a check on breadth rather than as the cyclical gauge.
+\item \emph{Inflation expectations} (households, firms in the Tankan, economists, breakevens) and \emph{model-based trend inflation} from four models: a time-varying-intercept Phillips curve, a TVP-VAR, a semi-structural model and a trend-cycle decomposition.
+\end{enumerate}
+
+For the rule, the ``headline'' series for Japan should be CPI less fresh food, because that is what the target is assessed on in practice and what the BoJ forecasts, and the ``core'' series CPI less fresh food and energy, both adjusted for institutional factors. The proposed central $\theta=1$ reflects that the BoJ's decision language is entirely about ``underlying'' inflation; the alternative $\theta=0$ (react to ex-fresh-food) is a scenario. The consumption-tax cut under discussion, which would lower fiscal-2027 inflation by about 1.3 points on both measures, is exactly the kind of institutional factor the adjusted series remove, and the rule should run on the adjusted series so that it does not call for easing in response to a tax cut.
+
+\section{Results and sensitivity}
+\label{sec:results}
+
+\subsection{Baseline paths}
+
+Table~\ref{tab:paths} reports the implemented path and horizon averages for each market on the house baseline (BoJ medians for Japan). Averages are geometric means of quarterly rates, which is what a rolling cash investment earns.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Baseline implemented paths and horizon averages, per cent}
+\label{tab:paths}
+\begin{tabular}{@{}lrrrrrrrrrr@{}}
+\toprule
+ & Anchor & Q4-26 & Q4-27 & Q4-28 & Q4-29 & Q4-31 & 1y & 2y & 5y & 10y \\
+\midrule
+US & 3.875 & 4.125 & 4.125 & 4.125 & 3.875 & 3.875 & 4.19 & 4.19 & 4.06 & 4.00 \\
+Euro area & 2.00 & 2.75 & 2.50 & 2.25 & 2.25 & 2.00 & 2.65 & 2.49 & 2.27 & 2.14 \\
+UK & 3.00 & 3.50 & 3.25 & 3.25 & 3.00 & 3.00 & 3.42 & 3.35 & 3.20 & 3.12 \\
+Japan (illustrative) & 1.75 & 1.50 & 2.00 & 2.00 & 1.75 & 1.75 & 1.82 & 1.92 & 1.88 & 1.82 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The pattern is the same everywhere: a modest near-term deviation from the anchor driven by the inflation and growth gaps, followed by convergence within about three years. The ten-year averages exceed the anchors by 10 to 15bp because the early years are above it.
+
+\subsection{Which terms do the work}
+
+Table~\ref{tab:contrib} reports the mean absolute contribution of each term to the quarterly change in the intended rate over the first eight quarters.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Mean absolute contribution to the quarterly change in the intended rate, first eight quarters, percentage points}
+\label{tab:contrib}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+ & Momentum & Pull to anchor & Inflation gap & Growth gap \\
+\midrule
+US & 0.038 & 0.048 & 0.043 & 0.013 \\
+Euro area & 0 & 0.084 & 0.068 & 0.032 \\
+UK & 0.013 & 0.077 & 0.003 & 0.034 \\
+Japan (illustrative) & 0 & 0.045 & 0.075 & 0.025 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The UK inflation term is almost inert on the house baseline because long-run CPI is assumed at 2.3\%, equal to $\pis$, and the near-term headline forecast read four quarters ahead is close to it. The UK path is then driven by the pull to anchor and the growth gap. This is worth checking against the UK note's claim that the headline-versus-core choice is the largest judgement for the UK; on the current baseline it is not.
+
+\subsection{Sensitivity of horizon averages}
+
+\begin{table}[htbp]
+\centering\footnotesize
+\caption{Change in horizon averages for parameter changes, percentage points relative to each market's baseline}
+\label{tab:sens}
+\setlength\tabcolsep{3pt}
+\begin{tabular}{@{}lrrrrrrrrrrrr@{}}
+\toprule
+ & \multicolumn{3}{c}{US} & \multicolumn{3}{c}{Euro area} & \multicolumn{3}{c}{UK} & \multicolumn{3}{c}{Japan} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}\cmidrule(lr){11-13}
+Change & 2y & 5y & 10y & 2y & 5y & 10y & 2y & 5y & 10y & 2y & 5y & 10y \\
+\midrule
+Anchor $+0.5$ & 0.42 & 0.48 & 0.50 & 0.29 & 0.39 & 0.45 & 0.35 & 0.44 & 0.47 & 0.22 & 0.34 & 0.43 \\
+Inflation response off & $-0.16$ & $-0.09$ & $-0.05$ & $-0.16$ & $-0.08$ & $-0.04$ & 0.00 & 0.00 & 0.00 & $-0.32$ & $-0.18$ & $-0.09$ \\
+Growth response off & $-0.03$ & $-0.01$ & $-0.01$ & $-0.03$ & $-0.04$ & $-0.02$ & $-0.03$ & $-0.05$ & $-0.03$ & $-0.06$ & $-0.08$ & $-0.04$ \\
+Momentum off & $-0.03$ & 0.00 & 0.00 & -- & -- & -- & 0.03 & 0.03 & 0.01 & -- & -- & -- \\
+$\lambda$ at range low & 0.00 & 0.01 & 0.01 & 0.03 & 0.13 & 0.11 & 0.22 & 0.17 & 0.08 & $-0.25$ & $-0.15$ & $-0.08$ \\
+$\lambda$ at range high & 0.06 & 0.01 & 0.01 & $-0.03$ & $-0.04$ & $-0.02$ & $-0.10$ & $-0.06$ & $-0.03$ & 0.10 & 0.03 & 0.01 \\
+$\theta$ switched & 0.48 & 0.17 & 0.08 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & $-0.22$ & $-0.14$ & $-0.07$ \\
+Leads (0,0) & -- & -- & -- & 0.51 & 0.34 & 0.17 & 0.42 & 0.18 & 0.09 & 0.16 & 0.16 & 0.08 \\
+Leads (4,4) & $-0.10$ & $-0.06$ & $-0.03$ & 0.03 & 0.00 & 0.00 & 0.10 & 0.00 & 0.00 & 0.00 & $-0.03$ & $-0.01$ \\
+$s_0=+0.5$ & 0.29 & 0.22 & 0.11 & 0.19 & 0.20 & 0.11 & 0.26 & 0.23 & 0.12 & 0.19 & 0.20 & 0.11 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:sens} ranks the inputs. The anchor dominates every horizon. The inflation response and $\theta$ matter for the two-year average where headline and core diverge (US, Japan). The forecast leads matter where inflation is projected to fall (euro area, UK). $\lambda$ matters in the UK and Japan because the starting point is further from the anchor. Momentum and the growth response barely matter for any average, though they shape the timing of the path. The stance term, if used, matters more than any of them.
+
+Two readings follow for the capital markets line. The five- and ten-year cash assumptions are essentially anchor plus a small cyclical premium, and the effort should go into the anchor. The two-year assumption, and hence the shape of the forward curve the house implies, is where the rule's dynamic parameters and the three judgemental terms earn their place.
+
+\section{Open issues and proposed changes}
+\label{sec:issues}
+
+\begin{enumerate}
+\item \emph{US forecast leads.} Set $k_\pi$ to 1 or 2 and $k_g$ to 1, consistent with the Greenbook-based evidence the US calibration relies on, and show the lead subscripts in the US equation as the other notes do. Effect on current averages: at most 3bp.
+\item \emph{Stance term documentation.} Document the cumulative multiplier or renormalise $s_0$ to the cumulative change; add the explanatory paragraph to the ECB and BoE notes; require any non-zero $s_0$ to appear in the sensitivity table.
+\item \emph{Momentum on notional versus implemented changes.} The code applies $\rho$ to the unrounded change. This is defensible, since the committee's intentions rather than its 25bp steps carry momentum, but it should be stated, and the alternative tested.
+\item \emph{UK inflation term.} With long-run CPI at $\pis=2.3$ and the forecast converging to it, the UK inflation term does nothing on the baseline. Either the house long-run CPI should be reconsidered against the 2\% target, or the UK note's description of the headline-versus-core judgement should be revised.
+\item \emph{Estimating $\theta$.} Re-estimate the US and euro-area reaction functions over 2021--26 with core and the headline--core wedge entered separately. This is the first episode since the 1970s with a wedge large enough to identify $\theta$.
+\item \emph{Japan lab.} Build the BoJ lab on the provisional calibration in Section~\ref{sec:japan}, with the institutional-factor-adjusted CPI series as inputs, fiscal-to-calendar conversion of the Outlook Report, and house forecasts when available. The widest uncertainty is the anchor, where the BoJ's own range spans 1.1--2.5\%.
+\item \emph{Nonlinearity.} UK and Japanese evidence points to a stronger response outside a zone around target. A piecewise $\varphi_\pi$ would be a small extension and would matter in the sticky-inflation scenarios.
+\item \emph{Lower-bound memory.} The make-up feature through the unbounded intended rate is simple but untested against the 2009--21 UK and 1999--2024 Japanese episodes. A back-test would discipline $\lambda$ at the exit.
+\item \emph{Consistency conditions.} The anchor's inflation component must equal long-run inflation in the forecasts, and the US CPI $\pis$ must be consistent with the Fed's 2\% PCE objective through an explicit wedge assumption. Both should be checked each forecast round.
+\end{enumerate}
+
+\appendix
+
+\section{Evidence on reaction functions, by study}
+\label{app:evidence}
+
+The tables below condense the appendix tables of the three market notes and add Japan. $\lambda = 1-$(smoothing coefficient, sum of lags where two; monthly coefficients cubed); $\rho = -$(second-lag coefficient). Long-run inflation responses are $1+\varphi_\pi$ in our notation; for first-difference rules the quarterly impact coefficient is shown. Samples, inflation measures, policy rates and units differ across studies.
+
+\begin{footnotesize}
+\setlength\tabcolsep{4pt}
+\begin{longtable}{@{}L{28mm}L{44mm}L{12mm}L{8mm}L{18mm}L{28mm}@{}}
+\caption{United States}\\
+\toprule
+Source & Specification and sample & $\lambda$ & $\rho$ & $1+\varphi_\pi$ & Activity response \\
+\midrule
+\endfirsthead
+\toprule
+Source & Specification and sample & $\lambda$ & $\rho$ & $1+\varphi_\pi$ & Activity response \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\textcite{taylor1993} & Proposed rule, 1987--92 & -- & -- & 1.5 & Gap 0.5 \\
+\textcite{judd1998} & Error-correction; Greenspan 1987Q3--97Q4 & 0.28 & 0.42 & 1.54 & Gap 0.99 \\
+\textcite{cgg2000} & Forward-looking, two lags; pre-/post-1979 & 0.32 / 0.21 & -- & 0.83 / 2.15 & Gap 0.27 / 0.93 \\
+\textcite{english2003} & One lag; 1987--2000; with AR(1) errors & 0.28 / 0.40 & -- & 1.56 / 1.60 & Gap 0.93 / 0.72 \\
+\textcite{rudebusch2002} & One lag; 1987Q4--99Q4 & 0.27 / 0.21 & -- & 1.53 / 1.40 & Gap 0.93 / 0.90 \\
+\textcite{rudebusch2006} & One lag; 1987Q4--2004Q4; core PCE & 0.22 & -- & 1.33 & Gap 1.29 \\
+\textcite{coibion2012} & Greenbook forecasts 1987Q4--2004Q4; two lags 1.22, $-0.40$ & 0.18 & 0.40 & $\approx$2.2 & Growth 0.18 short-run \\
+\textcite{smetswouters2007} & DSGE posterior mode 1966--2004 & 0.19 & -- & 2.03 & Gap 0.08; $\Delta$gap 0.22 \\
+\textcite{carvalho2021} & Two lags; real-time core PCE 1987--2007; OLS / IV & 0.18 / 0.17 & -- & 1.39 / 1.40 & Gap 1.01 / 0.95 \\
+\textcite{fedrules2018} & Board reference rules: inertial / first difference & 0.15 / 0 & -- & 1.5 / impact 0.1 & Gap 1.0 / growth 0.1 \\
+\textcite{gonzalez2023} & Time-varying rule on SEP medians 2012--23 & $\approx$0.17 & -- & 1.6 rising to 3.6 & Gap $\approx$0.9 \\
+This framework & Error-correction with momentum; core CPI & 0.20 & 0.40 & 1.5 & Growth $-$ potential 0.75 \\
+\end{longtable}
+
+\begin{longtable}{@{}L{28mm}L{44mm}L{12mm}L{8mm}L{18mm}L{28mm}@{}}
+\caption{Euro area}\\
+\toprule
+Source & Specification and sample & $\lambda$ & $\rho$ & $1+\varphi_\pi$ & Activity response \\
+\midrule
+\endfirsthead
+\toprule
+Source & Specification and sample & $\lambda$ & $\rho$ & $1+\varphi_\pi$ & Activity response \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\textcite{gerlachschnabel2000} & Pre-EMU weighted 3m rate 1990--98; OLS / GMM 4q ahead & -- / 0.82 & -- & 1.58 / 1.84 & Gap 0.45 / 0.34 \\
+\textcite{gerdesmeier2004} & Monthly EONIA, real-time GMM 1999--2003; current / SPF 12m / 24m & 0.75 / 0.64 / 0.70 & -- & 0.39 / 1.31 / 2.91 & Gap $\approx$2.0 \\
+\textcite{gerlach2007} & Ordered probit on repo changes 1999--2006 & -- & neg. & insig. & Expected growth, sentiment significant; gap not \\
+\textcite{gorter2008} & Consensus expectations; partial adjustment 1997--2006/09 & -- & -- & 1.39 / 1.43 & Expected growth 1.52 / 0.83 \\
+\textcite{orphanideswieland2013} & Calibrated first-difference rule on SPF & $\to0$ & 0 & impact 0.5 & Growth gap impact 0.5 \\
+\textcite{hartmannsmets2018} & First-difference rule on staff projections & $\to0$ & 0 & impact $<$0.5 & Growth impact $<$0.5 \\
+\textcite{paloviita2021} & Quarterly EONIA, staff projections, GMM 1999Q4--2014Q2 & 0.16--0.23 & -- & 1.23--4.45 & Projected growth 1.25--1.69 \\
+\textcite{gerlachlewis2014} & Monthly EONIA, SPF 12m, 1999--2011 & 0.17--0.20 & insig. & 4.55 & -- \\
+\textcite{smetswouters2003} & Euro-area DSGE posterior mode & 0.04 & -- & 1.68 & Gap 0.10; $\Delta$gap 0.16 \\
+\textcite{coenen2018} & NAWM II posterior mode & 0.08 & -- & 2.75 & Gap 0.03; $\Delta$gap 0.10 \\
+\textcite{darracq2026} & NAWM II, 1985--2019 & 0.065 & -- & 2.93 & Gap 0.03; $\Delta$gap 0.092 \\
+This framework & Error-correction; HICP 4q ahead, German growth 2q ahead & 0.17 & 0 & 3.0 & Growth $-$ potential 1.4 \\
+\end{longtable}
+
+\begin{longtable}{@{}L{28mm}L{44mm}L{12mm}L{8mm}L{18mm}L{28mm}@{}}
+\caption{United Kingdom}\\
+\toprule
+Source & Specification and sample & $\lambda$ & $\rho$ & $1+\varphi_\pi$ & Activity response \\
+\midrule
+\endfirsthead
+\toprule
+Source & Specification and sample & $\lambda$ & $\rho$ & $1+\varphi_\pi$ & Activity response \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\textcite{cgg1998} & Monthly 1979--90, forward-looking GMM with German rate & 0.34 & -- & 0.48 & Gap 0.28; German rate 0.60 \\
+\textcite{nelson2000} & Bank Rate 1992Q4--97Q1; RPIX 1q ahead & 0.71 & -- & 1.27 & Gap 0.47 \\
+\textcite{chadha2004} & 1979Q3--2000Q4 GMM; inflation 1q ahead & 0.11 & -- & 1.03 & Gap 0.54 \\
+\textcite{martinmilas2004} & 3m T-bill 1992Q4--2003Q3; RPI 1q ahead & 0.23--0.24 & -- & 1.45--1.65 & Gap 0.54--0.64 \\
+\textcite{adam2005} & Monthly 1997--2002; inflation 9m ahead & 0.39 & -- & 1.89 & Gap 1.30 \\
+\textcite{goodhart2005} & 1997--2003; Inflation Report forecasts 8q ahead, adjusted & $\approx$0 & $\approx$0 & impact 2.3 & Growth insignificant \\
+\textcite{besley2008} & Individual MPC votes 1997--2007 & 0.04--0.28 & -- & -- & Gap insignificant \\
+\textcite{boinetmartin2008} & 3m T-bill 1992Q4--2003Q1, two lags & 0.37 & 0.50 & 1.71 & Gap 1.15 \\
+\textcite{cobhamkang2013} & 1997Q3--2007Q4; GMM / ex-ante first differences & 0.11 / $\approx$0 & $\approx$0 & 1.86--2.13 / impact 1.03--1.16 & Gap 3.3--3.6 / growth impact 0.17--0.19 \\
+\textcite{cloyne2016} & Each Bank Rate decision 1975--2007 & $\approx$0 & -- & -- & Growth forecast 0.07 (q+1) \\
+\textcite{dicecio2007} & DSGE 1979--2005 & 0.13 & -- & 1.28 & Gap 0.35; $\Delta$gap 0.43 \\
+\textcite{burgess2013} & COMPASS, 1993--2007 & 0.20 & -- & 1.4 & Gap 0.1 \\
+\textcite{boe2025mpr} & Illustrative inertial / first-difference rules & 0.15 / 0 & -- & 1.5 / impact 0.1 & Gap 0.5 / growth 0.1 \\
+This framework & Error-correction with momentum; CPI 4q ahead, growth 1q ahead & 0.20 & 0.20 & 1.5 & Growth $-$ potential 0.75 \\
+\end{longtable}
+
+\begin{longtable}{@{}L{28mm}L{44mm}L{12mm}L{8mm}L{18mm}L{28mm}@{}}
+\caption{Japan}\\
+\toprule
+Source & Specification and sample & $\lambda$ & $\rho$ & $1+\varphi_\pi$ & Activity response \\
+\midrule
+\endfirsthead
+\toprule
+Source & Specification and sample & $\lambda$ & $\rho$ & $1+\varphi_\pi$ & Activity response \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\textcite{jinushi2000} & Call rate 1975--85, GMM / OLS, lagged rate 0.39--0.66; CPI vs 10-year average & 0.35--0.61 & -- & 0.44--0.50 (long-run, level) & Gap 1.9--2.0 long-run \\
+\textcite{itomishkin2004} & Static rule 1982Q1--94Q4; deflator / CPI ex fresh food; backward / forward & -- & -- & 1.47, 1.75 (backward); 1.23, 1.71 (forward) & Gap 0.21 / 0.31; insignificant forward \\
+\textcite{hayashikoeda2019} & Censored Taylor rule with exit condition, monthly 1992--2012, ML & 0.22 (7.8\%/month) & -- & 1.01 & Gap 0.04 \\
+\textcite{haba2026} & Perceived rule from QUICK survey 2004--25; inflation only, no smoothing & -- & -- & $\approx$0 at ELB, rising after 2023 & -- \\
+\textcite{cgg1998} & Forward-looking monthly 1979--94 (not re-verified) & $<$0.3 & -- & $\approx$2 & small \\
+This note (proposed) & Error-correction; CPI ex fresh food \& energy 4q ahead, growth 2q ahead & 0.20 & 0 & 1.5 & Growth $-$ potential 0.75 \\
+\end{longtable}
+\end{footnotesize}
+
+\section{Notation and mappings}
+
+\begin{small}
+\begin{tabular}{@{}L{34mm}L{118mm}@{}}
+\toprule
+Symbol & Meaning \\
+\midrule
+$i_t$, $i^{\mathrm{impl}}_t$ & Intended and implemented policy rate, annual per cent \\
+$\ib$ & Long-run nominal anchor (house input) \\
+$\pis$, $\gs$ & Long-run inflation in the rule's measure; potential growth \\
+$\lambda$ & Share of gap to target closed per quarter; $=1-s$ for one-lag smoothing $s$ \\
+$\rho$ & Momentum in changes; $=-s_2$ for a two-lag rule \\
+$1+\varphi_\pi$ & Long-run response to a persistent inflation gap \\
+$\varphi_g$ & Long-run response to growth minus potential \\
+$\alpha=\lambda(1+\varphi_\pi)$, $\beta=\lambda\varphi_g$ & Quarterly impact coefficients \\
+$\theta$ & Weight on core; $1-\theta$ is the share of the headline--core wedge responded to \\
+$k_\pi$, $k_g$ & Forecast leads in quarters \\
+$s_0$, $h$ & Starting-stance gap and its half-life in quarters \\
+$\mathrm{grid}(\cdot)$, ELB & 25bp snapping with dead band and per-meeting cap; effective lower bound \\
+\bottomrule
+\end{tabular}
+\end{small}
+
+\medskip
+\noindent\emph{Horizon average.} For $n$ years, $\bar r_n = \big[\prod_{q=1}^{4n}(1+i^{\mathrm{impl}}_q/400)\big]^{1/n}-1$.
+
+\noindent\emph{Code.} The simulation engine is identical, line for line, in the three market labs; this was verified by diffing the extracted functions. Parameters are the only market-specific content. The Japan results in this note were produced by running the same engine on the provisional parameter set.
+
+\printbibliography
+
+\end{document}
