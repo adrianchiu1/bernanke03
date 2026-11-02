@@ -1,0 +1,688 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>BoJ Policy Path Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a working paper. One reading column for prose; figures and the input lab break out to a wider measure. */
+:root{
+  --bg:#FFFFFF; --paper:#FFFFFF; --panel:#F4F6F9; --ink:#17202B; --muted:#5A6778; --rule:#D9DFE6;
+  --accent:#1F4E79; --anchor:#A8641F; --pos:#3E7C59; --neg:#A23B3B; --band:#DCE6F1; --sep:#7A4E9C;
+  --c-mom:#8395AB; --c-pull:#A8641F; --c-inf:#1F4E79; --c-gro:#3E7C59; --c-stn:#A23B3B;
+  --f-text:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-ui:"IBM Plex Sans","Segoe UI",Arial,sans-serif;
+  --f-head:"IBM Plex Sans Condensed","Arial Narrow",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --f-math:"Cambria Math",Cambria,"Source Serif 4",Georgia,serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11161D; --paper:#11161D; --panel:#18212C; --ink:#E4E9EF; --muted:#9AA7B6; --rule:#2B3644;
+  --accent:#8DB6E0; --anchor:#E2A86F; --pos:#7FC09A; --neg:#E58C8C; --band:#22344A; --sep:#C3A0E0;
+  --c-mom:#94A4B8; --c-pull:#E2A86F; --c-inf:#8DB6E0; --c-gro:#7FC09A; --c-stn:#E58C8C; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11161D; --paper:#11161D; --panel:#18212C; --ink:#E4E9EF; --muted:#9AA7B6; --rule:#2B3644;
+  --accent:#8DB6E0; --anchor:#E2A86F; --pos:#7FC09A; --neg:#E58C8C; --band:#22344A; --sep:#C3A0E0;
+  --c-mom:#94A4B8; --c-pull:#E2A86F; --c-inf:#8DB6E0; --c-gro:#7FC09A; --c-stn:#E58C8C; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-text);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.paper{max-width:1080px;margin:0 auto}
+.col{max-width:70ch;margin:0 auto}
+h1{font-family:var(--f-head);font-weight:600;font-size:clamp(28px,4vw,38px);line-height:1.15;margin:0 0 8px;text-wrap:balance;letter-spacing:.005em}
+.byline{font-family:var(--f-ui);font-size:13px;color:var(--muted);margin-bottom:22px}
+h2{font-family:var(--f-head);font-weight:600;font-size:22px;margin:44px 0 10px;text-wrap:balance}
+h3{font-family:var(--f-head);font-weight:600;font-size:17.5px;margin:26px 0 6px;color:var(--ink)}
+p{margin:0 0 14px}
+.abstract{border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);padding:14px 0 6px;margin:0 0 8px}
+.abstract .ablab{font-family:var(--f-ui);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.live{font-family:var(--f-mono);font-size:.92em;background:var(--panel);border-radius:3px;padding:0 4px;white-space:nowrap}
+.eq{font-family:var(--f-math);font-size:18px;text-align:center;margin:14px 0 16px;overflow-x:auto;white-space:nowrap;padding:4px 0}
+.eq .n{font-family:var(--f-ui);font-size:13px;color:var(--muted);margin-left:1.5em}
+.cite{color:var(--muted)}
+sup,sub{line-height:0}
+a{color:var(--accent)}
+figure{margin:22px 0 26px}
+figcaption{font-family:var(--f-ui);font-size:13px;color:var(--muted);margin-top:6px;line-height:1.45}
+figcaption b{color:var(--ink);font-weight:600}
+.wide{max-width:1080px;margin-left:auto;margin-right:auto}
+.ui{font-family:var(--f-ui);font-size:14px;line-height:1.45}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-family:var(--f-ui);font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;border-bottom:1px solid var(--rule);text-align:right;vertical-align:top}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:500;font-size:12.5px;border-bottom:1px solid var(--ink)}
+table.text td,table.text th{text-align:left}
+td.num{font-family:var(--f-mono);font-size:12.5px;white-space:nowrap}
+tr.chosen td{font-weight:600;border-top:1px solid var(--ink)}
+.evid td.num{white-space:normal;min-width:70px}
+.evid td:nth-child(2){min-width:220px}
+.evid td:last-child{min-width:200px}
+/* lab */
+.lab{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:16px;display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:18px}
+@media (max-width:900px){.lab{grid-template-columns:1fr}}
+.lab h4{font-family:var(--f-ui);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px;font-weight:600}
+.lab h4:first-child{margin-top:0}
+.ctl{display:flex;flex-direction:column;gap:10px;min-width:0}
+label{font-family:var(--f-ui);font-size:12.5px;color:var(--muted)}
+select,input[type=number]{font:inherit;font-family:var(--f-ui);font-size:13.5px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:5px 7px;width:100%}
+input[type=number]{font-family:var(--f-mono);font-size:12.5px;text-align:right}
+input[type=number][readonly]{background:transparent;border-style:dashed;color:var(--muted)}
+select:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.slider{display:grid;grid-template-columns:1fr auto;gap:0 8px;align-items:center;font-family:var(--f-ui)}
+.slider .name{font-size:13px}
+.slider .name i{font-family:var(--f-math);font-size:14.5px}
+.slider output{font-family:var(--f-mono);font-size:12.5px}
+.slider .track{grid-column:1/-1;position:relative;height:22px}
+.slider .lit{position:absolute;top:8px;height:6px;background:var(--band);border-radius:3px;pointer-events:none}
+.slider input[type=range]{position:absolute;inset:0;width:100%;margin:0;background:transparent}
+.slider .hint{grid-column:1/-1;font-size:11.5px;color:var(--muted)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button{font:500 12.5px var(--f-ui);color:var(--accent);background:transparent;border:1px solid var(--accent);border-radius:4px;padding:5px 10px;cursor:pointer}
+button.on{background:var(--accent);color:var(--paper)}
+.seg{display:inline-flex;align-self:flex-start;border:1px solid var(--accent);border-radius:4px;overflow:hidden}
+.seg button{border:0;border-radius:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:end}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(108px,1fr));gap:10px;font-family:var(--f-ui)}
+.kpi{border-left:3px solid var(--rule);padding:1px 0 1px 9px}
+.kpi .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.kpi .v{font-family:var(--f-mono);font-size:17px;font-variant-numeric:tabular-nums}
+.kpi.hl{border-left-color:var(--anchor)}
+.chart{position:relative;height:320px}
+.chart.small{height:230px}
+.svghost,.svghost svg{width:100%;display:block}
+.svghost text{font-family:var(--f-ui);font-size:11px;fill:var(--muted)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--f-ui);font-size:12px;color:var(--muted);margin-top:4px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px;background:var(--sw)}
+.tip{position:absolute;pointer-events:none;background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:6px 8px;font-size:12px;font-family:var(--f-mono);white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.12);z-index:2}
+.flag{display:inline-block;font-family:var(--f-ui);font-size:11.5px;padding:1px 7px;border-radius:10px;border:1px solid var(--rule);color:var(--muted)}
+.flag.warn{border-color:var(--neg);color:var(--neg)}
+.flag.ok{border-color:var(--pos);color:var(--pos)}
+.note{font-family:var(--f-ui);font-size:12.5px;color:var(--muted)}
+.inputs td{padding:3px 4px}
+.inputs input{width:100%;min-width:56px}
+.inputs td:first-child{font-family:var(--f-mono);font-size:12.5px;white-space:nowrap}
+.refs p{padding-left:24px;text-indent:-24px;font-size:15px;margin:0 0 7px}
+.toc{font-family:var(--f-ui);font-size:13px;columns:2;column-gap:28px;margin:12px 0 0;padding-left:18px;color:var(--muted)}
+@media (max-width:600px){.toc{columns:1}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<article class="paper">
+<div class="col">
+  <h1>A rule-based path for yen cash rates</h1>
+  <div class="byline">Working paper for the capital markets line · Japan, companion to the US, euro-area and UK papers · November 2026 · Provisional: no house forecasts for Japan yet; inputs are Bank of Japan medians · Interactive: every figure and number marked <span class="live">like this</span> updates with the inputs in the lab</div>
+
+  <div class="abstract">
+    <div class="ablab">Abstract</div>
+    <p>We extend the rule-based cash-rate framework to the Bank of Japan's policy rate, the uncollateralised overnight call rate. The structure is unchanged: an error-correcting rule that responds to projected inflation and to growth relative to potential, converges to a fixed anchor and is implemented in 25bp steps at the eight Monetary Policy Meetings a year. The calibration is the hardest of the four markets. The policy rate was at or below zero from 1999 to 2024 with brief exceptions, so most of the reaction-function literature either predates the modern framework or has to censor the lower bound, and the two best recent sources describe perceptions of the rule rather than the rule itself. We take a forward-looking specification with no momentum, as for the ECB, an inflation response at the Taylor-principle value, an anchor at the midpoint of the Bank's own neutral range, and a rule that reads inflation on the Bank's underlying measure, CPI excluding fresh food and energy adjusted for institutional factors. On the October 2026 Outlook Report medians the rule raises the call rate to 2.00% during 2027 and settles at the 1.75% anchor by 2029, averaging <span class="live" id="ab5">–</span>% over five years and <span class="live" id="ab10">–</span>% over ten. The anchor is the dominant uncertainty: the Bank's own range for the nominal neutral rate spans 1.1–2.5%.</p>
+  </div>
+  <ol class="toc">
+    <li><a href="#s1">Purpose and what differs</a></li><li><a href="#lab">Interactive lab</a></li><li><a href="#s2">What the literature supports</a></li>
+    <li><a href="#s3">The rule and its calibration</a></li><li><a href="#s4">Inputs and conventions</a></li><li><a href="#s5">Results</a></li>
+    <li><a href="#s6">Sensitivity</a></li><li><a href="#s7">Limitations and next steps</a></li><li><a href="#refs">References</a></li>
+  </ol>
+
+  <h2 id="s1">1. Purpose and what differs</h2>
+  <p>The cash leg of the capital markets line needs the expected average return on yen cash over five and ten years, derived from forecasts rather than copied from the OIS curve. The case for that, and for the error-correction structure, is set out in the US paper. This paper sets out what the Japanese evidence supports, which is less than for any other market, and where judgement has to fill the gap.</p>
+  <p>Four things differ. First, the history. The uncollateralised call rate was at zero from 1999 to 2006, at 0.5% or below from 2008, negative from 2016 to 2024, and only returned to positive territory in March 2024. A conventional reaction function cannot be estimated on most of this sample, and Kuttner and Posen (2004) and Ito and Mishkin (2004) argue that estimated Taylor rules say little about Japanese policy at all. Second, the target. The 2% price stability target is defined on all-items CPI, but the Bank forecasts, communicates and assesses progress on CPI excluding fresh food, and since 2015 has emphasised CPI excluding fresh food and energy as the measure of underlying inflation <span class="cite">(Bank of Japan 2026c)</span>. In March 2026 it began publishing both series adjusted for institutional factors such as energy subsidies and free education. Third, the starting point. The policy rate was raised to 1.25% in September 2026 and held on 30 October by 8–1, the dissent for 1.50%; the Bank says it "will continue to raise the policy interest rate and adjust the degree of monetary accommodation" and that the risk to underlying inflation is now to the upside <span class="cite">(Bank of Japan 2026a, 2026b)</span>. Fourth, the inputs. There are no house forecasts for Japan yet, so the baseline uses the Policy Board medians from the October 2026 Outlook Report, mapped approximately from fiscal to calendar years. Everything in this paper should be read as provisional until house forecasts replace them.</p>
+</div>
+
+<h2 id="lab" class="col">Interactive lab</h2>
+<div class="col"><p class="ui note" style="font-size:13.5px">Choose a scenario or enter your own paths. Growth (real GDP) and inflation (CPI) are calendar-year averages of year-on-year rates; 2026 already includes three observed quarters, the third quarter of GDP estimated. "Headline" is CPI excluding fresh food, the Bank's forecast measure; "core" is CPI excluding fresh food and energy, both adjusted for institutional factors. The monthly CPI builder is not available for Japan in this version. Parameter sliders show the evidence range as a shaded band; the band is wide because the evidence is thin.</p></div>
+<section class="lab wide" aria-label="Interactive lab">
+  <div class="ctl">
+    <h4>Scenario</h4>
+    <select id="scn" aria-label="Scenario"></select>
+    <p class="note" id="scnDesc" style="margin:0"></p>
+    <h4>Inflation inputs</h4>
+    <div class="seg" role="group" aria-label="Inflation input mode"><button id="mBuild" type="button">CPI builder</button><button id="mAnn" type="button">Annual averages</button></div>
+    <div id="builder" class="grid3 ui"></div>
+    <h4>Growth and inflation (annual averages, %)</h4><p class="note" style="margin:0" id="roNote"></p>
+    <div class="tablewrap"><table class="inputs" id="inputs"></table></div>
+    <h4>Anchor</h4>
+    <div class="grid3">
+      <div><label for="a_anchor">Long-run policy rate</label><input type="number" id="a_anchor" step="0.05"></div>
+      <div><label for="a_pi">Long-run core CPI <i>π</i>*</label><input type="number" id="a_pi" step="0.05"></div>
+      <div><label for="a_g">Potential growth <i>g</i>*</label><input type="number" id="a_g" step="0.05"></div>
+    </div>
+    <h4>Rule</h4>
+    <div id="sliders" class="ctl"></div>
+    <div class="row"><button id="steps" type="button" class="on">25bp steps on</button><button id="showAll" type="button">Compare scenarios</button><button id="reset" type="button">Reset scenario</button></div>
+  </div>
+  <div class="ctl" style="min-width:0">
+    <div class="kpis" id="kpis"></div>
+    <figure style="margin:6px 0 0">
+      <div class="chart"><div id="fig1" class="svghost" role="img" aria-label="Policy rate path"></div></div>
+      <figcaption><b>Figure 1. Policy rate path.</b> Uncollateralised overnight call rate target, quarterly. Solid: implemented in 25bp steps throughout (only the 18–19 December meeting remains in 2026Q4, two meetings a quarter after). Dashed: the rule's intended path. Purple dot: the IMF's April 2026 Article IV path, which reaches 1.5% by end-2027, shown for reference only; the Bank publishes no rate projection.</figcaption>
+      <div class="row" id="diag" style="margin-top:6px"></div>
+    </figure>
+    <figure style="margin:8px 0 0">
+      <div class="legend"><span style="--sw:var(--c-mom)">Momentum</span><span style="--sw:var(--c-pull)">Pull to anchor</span><span style="--sw:var(--c-inf)">Inflation gap</span><span style="--sw:var(--c-gro)">Growth gap</span><span style="--sw:var(--c-stn)">Starting stance</span></div>
+      <div class="chart small"><div id="fig2" class="svghost" role="img" aria-label="Contributions to quarterly change"></div></div>
+      <figcaption><b>Figure 2. What moves the rate.</b> Contribution of each term to the intended quarterly change, percentage points; line is the total. Momentum is zero at the central calibration.</figcaption>
+    </figure>
+    <figure style="margin:8px 0 0">
+      <div class="chart small"><div id="fig3" class="svghost" role="img" aria-label="Inputs"></div></div>
+      <figcaption><b>Figure 3. Inputs, quarterly.</b> Year-on-year rates; 2026Q1–Q3 observed (Q3 GDP estimated; quarterly CPI averages approximate). The rule reads inflation <i>k</i><sub>π</sub> quarters ahead and growth <i>k</i><sub>g</sub> quarters ahead of each date shown.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<div class="col">
+  <h2 id="s2">2. What the literature supports</h2>
+
+  <h3>2.1 The Bank of Japan's reaction function</h3>
+  <p>Four sources carry most of the weight. Jinushi, Kuroki and Miyao (2000) estimate a "good" policy rule on 1975–85, when the Bank was disinflating successfully, with a lagged dependent variable. Their basic GMM specification puts 0.39 on the lagged rate, an adjustment speed of about 0.6 a quarter, with long-run responses of 0.45 to the inflation gap and 1.9 to the output gap; the OLS variants put 0.65–0.66 on the lag (adjustment 0.35) with long-run responses of about 0.5 and 2.0. The inflation response fails the Taylor principle, which is a feature of the period rather than a guide to the present. Applying the rule forward, they identify delayed policy action in 1987–88, 1992–95 and 1997–98. Ito and Mishkin (2004) estimate static rules on 1982–94 with a 2% target: backward-looking responses of 1.47 on the GDP deflator and 1.75 on CPI excluding fresh food, with output-gap responses of 0.21 and 0.31; forward-looking responses of 1.23 and 1.71 with the gap insignificant. They conclude that Taylor-rule estimates are a poor instrument for judging Japanese policy, a view shared by Kuttner and Posen (2004).</p>
+  <p>Hayashi and Koeda (2019) solve the lower-bound problem directly. They estimate a censored Taylor rule with an explicit exit condition on monthly data for 1992–2012 by maximum likelihood. The speed of adjustment is 7.8% a month, about 0.22 a quarter in our notation; the inflation and output coefficients in the desired rate are 1.01 and 0.04. A Tobit estimate that ignores the exit condition gives a lower speed, 3.8% a month, because it reads the Bank's refusal to exit QE while the desired rate was positive as smoothing. The point generalises: any estimate on a sample that includes the zero-rate years will overstate inertia unless the exit rule is modelled.</p>
+  <p>The most recent evidence is on perceptions rather than behaviour. Haba, Hirano, Ito and Kaihatsu (2026), Bank of Japan staff, estimate the reaction function as perceived by market participants from the QUICK bond survey over 2004–25. The inflation coefficient is near zero while the rate is at the lower bound, rose during the 2006–07 tightening and when negative rates were introduced in 2016, and rose markedly after yield-curve control was loosened in July and October 2023. Participants whose long-run inflation expectations sit below 2% continue to perceive a weak response. The specification has no activity term and no smoothing, so it informs the direction of the calibration, not its parameters. Clarida, Galí and Gertler (1998) also estimate a forward-looking rule for the Bank over 1979–94, with monthly smoothing above 0.9 and an inflation response of about 2; we cite it for completeness and have not re-verified the published table.</p>
+  <p>These estimates span 0.45 to about 2 for the long-run inflation response and 0.2 to 0.6 for the adjustment speed, on samples that end before the current framework. The Bank's own communication is the better guide to the present. Since underlying inflation reached a level "generally consistent with" 2%, the Bank has framed policy as a sequence of adjustments toward neutral whose "timing and pace" depend on the outlook, and has shifted its stated risk from downside to upside <span class="cite">(Bank of Japan 2026b)</span>. That is a forward-looking rule with a positive inflation response and no commitment to a particular speed.</p>
+
+  <h3>2.2 Growth rather than the output gap</h3>
+  <p>Every Japanese estimate uses an output-gap level, and the Bank publishes its own output gap and potential growth estimates, with the caveat that both "should be interpreted with considerable latitude" <span class="cite">(Bank of Japan 2026b)</span>. The real-time problem that motivates growth rules in the US paper is worse in Japan: potential growth has been revised repeatedly and the Bank currently puts it at "around 0.5–1.0 percent" under one methodology. The forward-looking estimates of Ito and Mishkin find the gap insignificant once expected inflation is included, and Hayashi and Koeda's output coefficient is 0.04. We therefore keep the US design, growth minus potential, with the anchor supplying the level information. There is no direct Japanese evidence on the growth response; we use the US value of 0.75 with a wide range of 0.3–1.1.</p>
+
+  <h3>2.3 Inertia without momentum</h3>
+  <p>Hayashi and Koeda's 0.22 a quarter is the only adjustment-speed estimate that handles the lower bound, and it is close to the US and UK values. Jinushi et al.'s faster speeds come from a high-inflation decade with large, frequent rate moves. The Bank's current practice, 25bp steps separated by two or more meetings, is consistent with a speed of about 0.2 rather than 0.6. We take 0.20 with a range of 0.10–0.30. There is no Japanese evidence on momentum in rate changes; the Bank's 2024–26 hikes have been deliberately spaced rather than clustered, and the one two-lag estimate elsewhere (Boinet and Martin for the UK) does not transfer. We set <i>ρ</i> = 0, as for the ECB, with a range of 0–0.3.</p>
+
+  <h3>2.4 Which inflation, and at what horizon</h3>
+  <p>Japan has the most layered set of inflation measures of the four markets. The target is 2% on all-items CPI. The Bank's forecasts and its assessment of progress are on CPI excluding fresh food, which Japanese usage calls "core". Since the 2014–15 oil shock the Bank has published and emphasised CPI excluding fresh food and energy, "core-core", and the October 2026 Outlook Report forecasts both <span class="cite">(Bank of Japan 2026b)</span>. The Western core, all items less food and energy, is compiled by the Ministry of Internal Affairs and Communications but used less, because food is a large weight in the Japanese basket and the Bank argues that recent food inflation reflects labour and distribution costs rather than supply noise <span class="cite">(Bank of Japan 2026c)</span>. Since March 2026 each exclusion measure is also published excluding institutional factors: consumption-tax changes, free education and school lunches, the 2021 mobile-phone charge cut, travel subsidies and energy-burden relief. Alongside these the Bank monitors a 10% trimmed mean, a weighted median, the mode of the item-level distribution and a diffusion index, which Hogen, Kawamoto and Nakahama (2015) show track the output gap much more weakly than the exclusion measures, and four model-based estimates of trend inflation.</p>
+  <p>For the rule, "headline" is CPI excluding fresh food and "core" is CPI excluding fresh food and energy, both institutional-factor-adjusted. The Bank's decision language is entirely about underlying inflation, so the central <i>θ</i> is 1; a rule that reacts to the ex-fresh-food measure (<i>θ</i> = 0) is a scenario. This matters now: the proposed temporary cut in consumption tax on food would lower fiscal-2027 inflation by about 1.3 points on both measures, and a rule run on unadjusted data would call for easing in response to a tax cut. The horizon follows the ECB: the Bank's forecasts are two to three years forward and its statements condition on the "likelihood of realizing the baseline scenario", so the rule reads projected inflation four quarters ahead and growth two quarters ahead. The leads can be changed in the lab.</p>
+
+  <h3>2.5 Anchoring and mean reversion</h3>
+  <p>The long-run policy rate is an input, here <span class="live" id="anc1">1.75</span>%, with long-run core inflation of <span class="live" id="anc2">2.0</span>%, so a long-run real rate of about −¼%. The Bank's latest estimate of the nominal neutral rate is 1.1–2.5%, a real rate of −0.9 to +0.5%, and it stresses that the range is wide and should not be read as a target; one board member has argued it may be pushed higher by overseas rates. We take the midpoint rounded to the grid. The IMF's April 2026 Article IV projects the policy rate reaching about 1.5% by end-2027, and private forecasters' terminal-rate assumptions cluster at 1.5%, so 1.75% sits slightly above consensus. The anchor is the dominant uncertainty in this market; Table 2 shows that moving it by half a point moves the ten-year average by about 43bp. With all gaps closed, a deviation from the anchor decays as <i>x</i><sub><i>t</i></sub> = (1 + <i>ρ</i> − <i>λ</i>)<i>x</i><sub><i>t</i>−1</sub> − <i>ρ</i><i>x</i><sub><i>t</i>−2</sub>. With no momentum, convergence has no overshoot, and a gap halves in about <span class="live" id="hl">4</span> quarters (Figure 4).</p>
+  <figure>
+    <div class="chart small"><div id="fig4" class="svghost" role="img" aria-label="Convergence dynamics"></div></div>
+    <figcaption><b>Figure 4. Mean reversion under the current parameters.</b> Policy-rate deviation from its starting point, pp, continuous (no steps). Blue: rate starts 1pp above the anchor with all gaps closed. Orange: a 1pp inflation gap that closes with the one-year half-life assumed beyond the forecast horizon.</figcaption>
+  </figure>
+
+  <h3>2.6 Implementation: steps, meetings and the lower bound</h3>
+  <p>The call-rate target moves in multiples of 25bp at eight Monetary Policy Meetings a year. Only 18–19 December remains in 2026, and the 2027 calendar has two meetings in each quarter. The rule runs on a continuous intended rate and implements it on the 25bp grid, moving only when the intended rate is more than half a step away and at most 25bp per meeting. The effective lower bound is set at −0.10%, the level of the 2016–24 negative-rate policy, on the implemented rate; the intended rate may go below it, so the rule remembers how far policy would have gone. This is the simple make-up feature of the US paper. It has not been back-tested on the 1999–2024 episode, and the Hayashi–Koeda result that exit depended on an explicit inflation condition rather than on the desired rate alone suggests the rule would have lifted off too early in 2006 and too early again in 2013. A back-test is the first item in Section 7.</p>
+
+  <h3>2.7 Fiscal years and institutional factors</h3>
+  <p>The Bank's forecasts are for fiscal years ending in March. The lab's inputs are calendar-year averages, so the medians are mapped approximately: fiscal 2026 to calendar 2026 using the three observed quarters, fiscal 2027 to calendar 2027, and so on. The error is largest in 2026, where calendar-year core CPI excluding fresh food has averaged about 1.9% through September against a fiscal-year median of 2.5% that includes a fourth quarter boosted by energy and the yen. The October Report's forecasts also exclude the consumption-tax cut; the rule should run on institutional-factor-adjusted series so that this does not matter. When house forecasts for Japan arrive, both conversions should be done explicitly.</p>
+<h2 id="s3">3. The rule and its calibration</h2>
+  <p>Quarterly, with all rates in annual per cent and inflation and growth as four-quarter rates; superscripts denote the forecast horizon:</p>
+  <div class="eq">Δ<i>i</i><sub><i>t</i></sub> = <i>ρ</i>&#8202;Δ<i>i</i><sub><i>t</i>−1</sub> + <i>λ</i>&#8202;[&#8202;(<i>ī</i> − <i>i</i><sub><i>t</i>−1</sub>) + (1 + <i>φ</i><sub>π</sub>)(<i>π</i><sub><i>t</i>+<i>k</i>π</sub> − <i>π</i>*) + <i>φ</i><sub>g</sub>(<i>g</i><sub><i>t</i>+<i>k</i>g</sub> − <i>g</i>*) + <i>s</i><sub>0</sub>2<sup>−<i>t</i>/<i>h</i></sup>&#8202;]<span class="n">(1)</span></div>
+  <div class="eq"><i>π</i> = core + (1 − <i>θ</i>)(headline − core),&#8195; <i>i</i><sup>impl</sup><sub><i>t</i></sub> = grid(<i>i</i><sub><i>t</i></sub>) ≥ ELB<span class="n">(2)</span></div>
+  <p>The mapping from published estimates is the one used for the US: one-lag smoothing <i>s</i> gives <i>λ</i> = 1 − <i>s</i>, and the long-run responses are 1 + <i>φ</i><sub>π</sub> and <i>φ</i><sub>g</sub>. At the central calibration the quarterly impact of a 1pp inflation gap is 0.30 and of a growth gap 0.15, the US values. Every parameter below is set rather than estimated, and the ranges are wider than for any other market.</p>
+  <div class="tablewrap" style="margin:8px 0 6px">
+  <table class="text">
+    <tr><th>Parameter</th><th>Meaning</th><th>Central</th><th>Range</th><th>Basis</th></tr>
+    <tr><td><i>λ</i></td><td>Share of gap to target closed per quarter</td><td class="num">0.20</td><td class="num">0.10–0.30</td><td>Hayashi–Koeda 0.22 (censored, with exit condition); Jinushi et al. 0.35–0.61 on 1975–85; current practice of spaced 25bp moves</td></tr>
+    <tr><td><i>ρ</i></td><td>Momentum in changes</td><td class="num">0</td><td class="num">0–0.30</td><td>No Japanese estimate; 2024–26 hikes spaced, not clustered. Upper end from US and UK estimates</td></tr>
+    <tr><td>1 + <i>φ</i><sub>π</sub></td><td>Long-run response to projected inflation</td><td class="num">1.5</td><td class="num">1.0–2.0</td><td>Hayashi–Koeda 1.01; Ito–Mishkin 1.23–1.75; Clarida–Galí–Gertler ≈2; Jinushi et al. 0.45–0.5 (pre-framework). Taylor-principle value taken</td></tr>
+    <tr><td><i>φ</i><sub>g</sub></td><td>Long-run response to growth minus potential</td><td class="num">0.75</td><td class="num">0.3–1.1</td><td>No direct evidence; gap-level responses 0.04 (Hayashi–Koeda) to 2.0 (Jinushi et al.). US value taken</td></tr>
+    <tr><td><i>k</i><sub>π</sub>, <i>k</i><sub>g</sub></td><td>Forecast horizons, quarters</td><td class="num">4, 2</td><td class="num">2–6, 1–3</td><td>By analogy with the ECB; Bank forecasts and communication are two to three years forward</td></tr>
+    <tr><td><i>θ</i></td><td>Look-through of ex-fresh-food minus ex-fresh-food-and-energy</td><td class="num">1</td><td class="num">0–1</td><td>Bank's decision language is on underlying inflation; ex-fresh-food-reactive is a scenario (2.4)</td></tr>
+    <tr><td><i>ī</i>, <i>π</i>*, <i>g</i>*</td><td>Anchor, long-run inflation, potential growth</td><td class="num">1.75, 2.0, 0.6</td><td class="num">inputs</td><td>Midpoint of the Bank's nominal neutral range 1.1–2.5%; 2% target; Bank potential growth "around 0.5–1.0%"</td></tr>
+  </table></div>
+  <p class="note">Detailed evidence by study, with specifications, samples and the version of each paper used, is in Table A1 at the end.</p>
+
+  <h2 id="s4">4. Inputs and conventions</h2>
+  <p><b>Growth in 2026.</b> Real GDP rose 0.4% in the second quarter (1.4% annualised, second estimate), and the Bank expects fiscal 2026 growth of 0.7%, "at a decelerated rate" because of the rise in energy and raw-material prices since the spring, with growth rising moderately from fiscal 2027 as those effects fade and AI-related demand and wage growth support spending <span class="cite">(Bank of Japan 2026b)</span>. The calendar-year inputs are 1.0% for 2026, reflecting the stronger first half, then the fiscal medians of 0.7 and 0.8%, decaying to potential of 0.6%.</p>
+  <p><b>The 2026 inflation figure.</b> CPI excluding fresh food was 2.1% in September 2026, the first reading at or above 2% in nine months, after 1.7% in August; excluding fresh food and energy it was 2.4%, up from 1.9%. The calendar-year average through September is about 1.9% on the ex-fresh-food measure, so the fiscal-2026 median of 2.5% requires a fourth quarter and first quarter of 2027 well above 2%, which the Bank attributes to crude oil, semiconductor prices and the yen. The calendar-year inputs are 2.0% for 2026 on the ex-fresh-food measure and 2.2% on the ex-fresh-food-and-energy measure, then the fiscal medians.</p>
+  <p><b>Potential and consistency.</b> Potential growth of 0.6% is inside the Bank's range and long-run inflation equals the 2% target on the underlying measure, so the path settles at the anchor. The anchor of 1.75% implies a long-run real rate of about −¼%, inside the Bank's −0.9 to +0.5% range. The quarterly CPI history in the lab is approximate (monthly data averaged by hand) and should be replaced with the Bank's institutional-factor-adjusted series.</p>
+
+  <h2 id="s5">5. Results</h2>
+  <p id="resText">–</p>
+  <div class="tablewrap"><table id="scnTable"></table></div>
+  <p class="note" style="margin-top:6px">All scenarios run with the current parameters and anchor. Year-end values are the call-rate target where the path is stepped.</p>
+  <p>Three results stand out across the scenarios. First, on the Bank's own medians the rule continues the normalisation: a hike in December 2026 and two more in the first half of 2027 take the call rate to 2.00%, above the 1.75% anchor, because projected underlying inflation sits at 2.7% in fiscal 2027; the rate returns to the anchor by 2029 as inflation falls back to 2%. Second, the choice of measure matters in the other direction from the US. A rule that reacts to CPI excluding fresh food, which the Bank projects falling to 2.0% in fiscal 2028, stops at 1.75% rather than 2.00% and lowers the five-year average by about 15bp. Third, the consumption-tax scenario shows why the institutional-factor-adjusted series matter: run on unadjusted data the rule skips the December hike and lowers the five-year average by about 12bp in response to a tax cut, which no reading of the Bank's communication supports.</p>
+
+  <h2 id="s6">6. Sensitivity</h2>
+  <p>Table 2 moves each parameter to the ends of its evidence range for the selected scenario. The anchor dominates, as in the other markets, and here its uncertainty is widest. The adjustment speed matters more than elsewhere because the starting rate is further from the anchor in proportional terms: moving <i>λ</i> to the bottom of its range lowers the five-year average by about 15bp. The inflation response and the measure matter for the two-year average because projected underlying inflation is above target through 2027. Momentum and the growth response barely matter for any average.</p>
+  <div class="tablewrap"><table id="sensTable"></table></div>
+  <p class="note" style="margin-top:6px">Table 2. Selected scenario, one parameter changed at a time; all others at current settings.</p>
+
+  <h2 id="s7">7. Limitations and next steps</h2>
+  <p>Everything here is provisional. The parameters are set from a thin and dated literature and from reading the Bank's communication; none is estimated on the current framework. The inputs are the Bank's medians rather than house forecasts, converted approximately from fiscal to calendar years, and the quarterly CPI history is hand-averaged. Four things should happen before this path is used for the capital markets line. First, house forecasts for Japanese GDP and for both CPI measures, with the fiscal-to-calendar conversion done explicitly. Second, the institutional-factor-adjusted CPI series from the Bank as the inflation inputs, so that the consumption-tax cut and energy subsidies do not enter the rule. Third, a back-test of the rule on the 2006–08 and 2024–26 exits, the only two periods with positive rates in a quarter-century, to discipline the adjustment speed and the lower-bound memory. Fourth, a view on the anchor that is the house's own rather than the midpoint of the Bank's range, since half a point on it is worth 43bp on the ten-year average. The exchange rate, which the Bank names as a risk in every statement and which several Japanese studies include in the rule, is outside the framework; a persistent yen effect belongs in a scenario.</p>
+</div>
+<div class="wide">
+  <h2>Appendix: Table A1. Evidence on the Bank of Japan's reaction function</h2>
+  <div class="tablewrap evid"><table class="text"><tr><th>Source</th><th>Specification and sample</th><th><i>λ</i></th><th><i>ρ</i></th><th>1 + <i>φ</i><sub>π</sub></th><th>Activity response</th><th>Note</th></tr>
+<tr><td>Jinushi, Kuroki and Miyao (2000)</td><td>Call rate, quarterly, 1975Q1–85Q4; GMM / OLS with lagged rate 0.39 / 0.65–0.66; CPI relative to its 10-year average; HP-type gap; exchange rate</td><td class=num>0.61 / 0.34–0.35</td><td class=num>—</td><td class=num>0.44 / 0.49–0.50 (long-run, level)</td><td>Gap 1.9 / 2.0 long-run</td><td>"Good" rule of the disinflation decade; fails the Taylor principle. Applied forward to identify delayed action in 1987–88, 1992–95, 1997–98</td></tr>
+<tr><td>Ito and Mishkin (2004)</td><td>Static rule, 1982Q1–94Q4; 2% target; GDP deflator / CPI ex fresh food; backward / forward-looking</td><td class=num>—</td><td class=num>—</td><td class=num>1.47 / 1.75 backward; 1.23 / 1.71 forward</td><td>Gap 0.21 / 0.31 backward; insignificant forward</td><td>Authors sceptical of Taylor rules for Japan; Table 1 of NBER WP 10878</td></tr>
+<tr><td>Hayashi and Koeda (2019)</td><td>Censored Taylor rule with exit condition in a regime-switching SVAR; monthly, 1992–2012; ML</td><td class=num>0.22 (7.8%/month)</td><td class=num>—</td><td class=num>1.01</td><td>Gap 0.04</td><td>Tobit without the exit condition gives 3.8%/month. Mean threshold inflation for exit 0.38%. Banking-crisis dummy −28bp</td></tr>
+<tr><td>Haba, Hirano, Ito and Kaihatsu (2026)</td><td>Perceived rule from QUICK Monthly Market Survey, 2004–25; policy rate = r* + trend inflation + β(π − π*); no activity term, no smoothing</td><td class=num>—</td><td class=num>—</td><td class=num>β ≈ 0 at the lower bound; rises in 2006–07, 2016 and after July 2023</td><td>—</td><td>Perceptions, not behaviour. Participants with expectations below 2% perceive a weak response. BoJ WP 26-E-5</td></tr>
+<tr><td>Clarida, Galí and Gertler (1998)</td><td>Forward-looking GMM, monthly, 1979–94</td><td class=num>&lt;0.3</td><td class=num>—</td><td class=num>≈2</td><td>small</td><td>Not re-verified against the published table</td></tr>
+<tr><td>Kuttner and Posen (2004)</td><td>Survey and critique of Taylor-rule estimates for Japan</td><td class=num>—</td><td class=num>—</td><td class=num>—</td><td>—</td><td>Argues estimated rules cannot discern whether policy was too tight</td></tr>
+<tr class="chosen"><td>This paper</td><td>Error-correction, quarterly; projected CPI ex fresh food and energy four quarters ahead, growth two quarters ahead</td><td class=num>0.20</td><td class=num>0</td><td class=num>1.5</td><td>Growth minus potential 0.75</td><td>Set, not estimated; ranges in Section 3</td></tr></table>
+<p class="note" style="margin-top:6px"><i>λ</i> = 1 − quarterly smoothing; monthly coefficients are cubed. Long-run inflation responses are 1 + <i>φ</i><sub>π</sub> in our notation. Samples, measures and policy rates differ. Where a published table was not accessible, figures are from the version named in the note; coefficients we could not read are left blank rather than inferred.</p></div>
+</div>
+<div class="col">
+  <h2 id="refs">References</h2>
+  <div class="refs">
+<p>Bank of Japan. 2013. "The 'Price Stability Target' under the Framework for the Conduct of Monetary Policy." 22 January 2013.</p>
+<p>Bank of Japan. 2026a. "Statement on Monetary Policy." 30 October 2026.</p>
+<p>Bank of Japan. 2026b. <i>Outlook for Economic Activity and Prices, October 2026</i>. The Bank's View, 30 October 2026; full text, 2 November 2026.</p>
+<p>Bank of Japan, Monetary Affairs Department. 2026c. "The Concept and Measurement of Underlying Inflation." Bank of Japan Review 2026-E-5, March 2026.</p>
+<p>Bank of Japan, Research and Statistics Department. 2026d. "Updates on the Output Gap and Potential Growth Rate, and Monitoring Labor Market Indicators." Bank of Japan Research Paper, June 2026.</p>
+<p>Clarida, Richard, Jordi Galí, and Mark Gertler. 1998. "Monetary Policy Rules in Practice: Some International Evidence." <i>European Economic Review</i> 42 (6): 1033–67.</p>
+<p>Haba, Shunsuke, Ryuichiro Hirano, Yuichiro Ito, and Sohei Kaihatsu. 2026. "Changes in Perceptions about Monetary Policy: Estimating the Policy Reaction Function Using Market Survey Data." Bank of Japan Working Paper 26-E-5, March 2026.</p>
+<p>Hayashi, Fumio, and Junko Koeda. 2019. "Exiting from Quantitative Easing." <i>Quantitative Economics</i> 10 (3): 1069–1107. https://doi.org/10.3982/QE1058.</p>
+<p>Hogen, Yoshihiko, Takuji Kawamoto, and Moe Nakahama. 2015. "Core Inflation and the Business Cycle." Bank of Japan Review 2015-E-6, November 2015.</p>
+<p>International Monetary Fund. 2026. <i>Japan: 2026 Article IV Consultation</i>. Washington, DC, April 2026.</p>
+<p>Ito, Takatoshi, and Frederic S. Mishkin. 2004. "Two Decades of Japanese Monetary Policy and the Deflation Problem." NBER Working Paper 10878.</p>
+<p>Jinushi, Toshiki, Yoshihiro Kuroki, and Ryuzo Miyao. 2000. "Monetary Policy in Japan Since the Late 1980s: Delayed Policy Actions and Some Explanations." In <i>Japan's Financial Crisis and Its Parallels to U.S. Experience</i>, edited by Ryoichi Mikitani and Adam S. Posen, 115–48. Washington, DC: Institute for International Economics.</p>
+<p>Kuttner, Kenneth N., and Adam S. Posen. 2004. "The Difficulty of Discerning What's Too Tight: Taylor Rules and Japanese Monetary Policy." <i>North American Journal of Economics and Finance</i> 15 (1): 53–74.</p>
+<p>Nakamura, Emi, Venance Riblier, and Jón Steinsson. 2025. "Beyond the Taylor Rule." Working paper, University of California, Berkeley.</p>
+<p>Orphanides, Athanasios, and John C. Williams. 2002. "Robust Monetary Policy Rules with Unknown Natural Rates." <i>Brookings Papers on Economic Activity</i> 2002 (2): 63–146.</p>
+<p>Takata, Hajime. 2026. Speech to business leaders, 2 September 2026. Tokyo: Bank of Japan.</p>
+<p>Walsh, Carl E. 2003. "Speed Limit Policies: The Output Gap and Optimal Monetary Policy." <i>American Economic Review</i> 93 (1): 265–78.</p></div>
+</article>
+
+<script>
+// JavaScript port of cashpath/engine.py. Keep the two in step; tests/parity.mjs compares them.
+(function (root) {
+  function qAdd(q, n) { // q like "2026Q3"
+    let y = parseInt(q.slice(0, 4), 10), k = parseInt(q.slice(5), 10) - 1 + n;
+    y += Math.floor(k / 4); k = ((k % 4) + 4) % 4;
+    return y + "Q" + (k + 1);
+  }
+  function qDiff(a, b) { // a - b in quarters
+    return (parseInt(a.slice(0, 4)) * 4 + parseInt(a.slice(5)) - 1) - (parseInt(b.slice(0, 4)) * 4 + parseInt(b.slice(5)) - 1);
+  }
+  function interp(x, xs, ys) {
+    if (x <= xs[0]) return ys[0];
+    for (let i = 1; i < xs.length; i++) if (x <= xs[i]) return ys[i - 1] + (ys[i] - ys[i - 1]) * (x - xs[i - 1]) / (xs[i] - xs[i - 1]);
+    return ys[ys.length - 1];
+  }
+  function gStarFor(gs, year) {
+    const ys = Object.keys(gs || {}).map(Number).sort((a, b) => a - b);
+    if (!ys.length) return 2.0;
+    const past = ys.filter(y => y <= year);
+    return gs[past.length ? past[past.length - 1] : ys[0]];
+  }
+  function solveLinear(M, v) { // Gaussian elimination with partial pivoting
+    const n = v.length, A = M.map((r, i) => r.concat([v[i]]));
+    for (let c = 0; c < n; c++) {
+      let piv = c; for (let r = c + 1; r < n; r++) if (Math.abs(A[r][c]) > Math.abs(A[piv][c])) piv = r;
+      [A[c], A[piv]] = [A[piv], A[c]];
+      for (let r = c + 1; r < n; r++) { const f = A[r][c] / A[c][c]; if (!f) continue; for (let k = c; k <= n; k++) A[r][k] -= f * A[c][k]; }
+    }
+    const x = new Array(n).fill(0);
+    for (let r = n - 1; r >= 0; r--) { let s = A[r][n]; for (let k = r + 1; k < n; k++) s -= A[r][k] * x[k]; x[r] = s / A[r][r]; }
+    return x;
+  }
+  function smoothAnnualAverage(n, prev2, groups, w1) {
+    w1 = w1 == null ? 1.0 : w1;
+    const rows = [], rhs = [], ext = [prev2[0], prev2[1]];
+    for (let j = 0; j < n; j++) { const r = new Array(n).fill(0); let c = 0;
+      [[0, 1], [1, -2], [2, 1]].forEach(([off, w]) => { const k = j - off; if (k >= 0) r[k] += w; else c -= w * ext[2 + k]; });
+      rows.push(r); rhs.push(c); }
+    for (let j = 0; j < n; j++) { const r = new Array(n).fill(0); let c = 0; r[j] += w1; if (j >= 1) r[j - 1] -= w1; else c += w1 * prev2[1]; rows.push(r); rhs.push(c); }
+    const m = groups.length, N = n + m, K = [], b = new Array(N).fill(0);
+    for (let i = 0; i < N; i++) K.push(new Array(N).fill(0));
+    for (let r = 0; r < rows.length; r++) { const row = rows[r];
+      for (let a = 0; a < n; a++) { if (!row[a]) continue; b[a] += 2 * row[a] * rhs[r]; for (let c = 0; c < n; c++) if (row[c]) K[a][c] += 2 * row[a] * row[c]; } }
+    groups.forEach(([idxs, total], g) => { idxs.forEach(i => { K[n + g][i] = 1; K[i][n + g] = 1; }); b[n + g] = total; });
+    return solveLinear(K, b).slice(0, n);
+  }
+  function buildInputs(sc, p, H) {
+    const qs = []; for (let j = 1; j <= H; j++) qs.push(qAdd(sc.start.quarter, j));
+    const out = { quarter: qs, g_star: qs.map(q => gStarFor(sc.g_star, +q.slice(0, 4))) };
+    const dec = Math.pow(0.5, 1 / p.gap_halflife_q);
+    const qNum = q => parseInt(q.slice(0, 4)) * 4 + parseInt(q.slice(5)) - 1;
+    for (const v of ["gdp", "core", "headline"]) {
+      if (sc.basis === "annual_average" && sc[v] && Object.keys(sc[v]).length) {
+        const H0 = (sc.history || {});
+        const hist = H0[v] || (v === "core" ? H0.headline : null) || {};
+        const sq = sc.start.quarter, lastObs = sc.start[v] != null ? sc.start[v] : (hist[sq] ?? p.pi_star);
+        const prevObs = hist[qAdd(sq, -1)] ?? lastObs;
+        const ann = {}; Object.keys(sc[v]).map(Number).sort((a, b) => a - b).forEach(y => ann[y] = sc[v][y]);
+        const ys = Object.keys(ann).map(Number), lastY = Math.max(...ys);
+        const tgtLast = v === "gdp" ? gStarFor(sc.g_star, lastY) : p.pi_star;
+        const endY = +qs[qs.length - 1].slice(0, 4);
+        for (let y = lastY + 1; y <= endY; y++) { const t = v === "gdp" ? gStarFor(sc.g_star, y) : p.pi_star; ann[y] = t + (ann[lastY] - tgtLast) * Math.pow(dec, 4 * (y - lastY)); }
+        const groups = [], fixed = (sc.quarterly || {})[v] || {};
+        qs.forEach((q, i) => { if (fixed[q] != null) groups.push([[i], fixed[q]]); });
+        Object.keys(ann).map(Number).sort((a, b) => a - b).forEach(y => {
+          const proj = qs.map((q, i) => +q.slice(0, 4) === y ? i : -1).filter(i => i >= 0);
+          if (!proj.length || proj.some(i => fixed[qs[i]] != null)) return;
+          const nObs = 4 - proj.length; let s = 0, have = 0;
+          for (let k = 1; k <= nObs; k++) { const val = hist[y + "Q" + k]; if (val != null && qNum(y + "Q" + k) <= qNum(sq)) { s += val; have++; } }
+          groups.push(nObs && have < nObs ? [proj, ann[y] * proj.length] : [proj, 4 * ann[y] - s]);
+        });
+        out[v] = smoothAnnualAverage(qs.length, [prevObs, lastObs], groups, 1.0);
+        continue;
+      }
+      const kx = [0], ky = [sc.start[v] != null ? sc.start[v] : (v === "headline" ? (sc.start.core ?? p.pi_star) : p.pi_star)];
+      const ann = sc[v] || {};
+      Object.keys(ann).map(Number).sort((a, b) => a - b).forEach(y => {
+        const k = qDiff(y + "Q4", sc.start.quarter); if (k > 0) { kx.push(k); ky.push(ann[y]); }
+      });
+      const last = kx[kx.length - 1];
+      out[v] = qs.map((q, i) => {
+        const j = i + 1;
+        if (j <= last) return interp(j, kx, ky);
+        const tgt = v === "gdp" ? gStarFor(sc.g_star, +q.slice(0, 4)) : p.pi_star;
+        const gap0 = ky[ky.length - 1] - tgt;
+        return tgt + gap0 * Math.pow(dec, j - last);
+      });
+    }
+    return out;
+  }
+  function snap(n, prev, p, cap) {
+    const step = p.step == null ? 0.25 : p.step, band = p.step_band == null ? 0.025 : p.step_band;
+    if (step <= 0) return Math.max(p.elb, n);
+    if (Math.abs(n - prev) <= step / 2 + band) return Math.max(p.elb, prev);
+    const base = p.grid_base == null ? p.elb : p.grid_base;
+    const k = Math.round((n - base) / step);
+    let tgt = Math.max(p.elb, base + k * step);
+    if (cap != null) tgt = Math.min(prev + cap, Math.max(prev - cap, tgt));
+    return tgt;
+  }
+  function simulate(sc, base, H) {
+    H = H || 41;
+    const p = Object.assign({}, base, sc.overrides || {});
+    const alpha = p.lam * (1 + p.phi_pi), beta = p.lam * p.phi_g;
+    const x = buildInputs(sc, p, H);
+    let iN = sc.start.rate, dPrev = sc.start.last_change || 0;
+    let iPrev = snap(sc.start.rate, sc.start.rate, Object.assign({}, base, sc.overrides || {}));
+    const rows = [];
+    const L = p.lead_q || 0;
+    for (let t = 0; t < H; t++) {
+      const f = Math.min(t + L, H - 1), fg = Math.min(t + (p.lead_g_q || 0), H - 1);
+      const piRule = x.core[f] + (1 - p.theta) * (x.headline[f] - x.core[f]);
+      const cm = p.rho * dPrev, cp = p.lam * (p.anchor_nominal - iN);
+      const ci = alpha * (piRule - p.pi_star), cg = beta * (x.gdp[fg] - x.g_star[fg]);
+      const cs = p.lam * (p.stance_gap0 || 0) * Math.pow(0.5, t / (p.stance_halflife_q || 6));
+      const d = cm + cp + ci + cg + cs;
+      iN += d;
+      const cap = (p.max_move_per_meeting ?? 0.25) * (t === 0 ? (p.meetings_first_q ?? 1) : (p.meetings_per_q ?? 2));
+      const iAct = t < (p.step_horizon_q == null ? 12 : p.step_horizon_q) ? snap(iN, iPrev, p, cap) : Math.max(p.elb, iN);
+      rows.push({ quarter: x.quarter[t], rate: iAct, notional: iN, change: d, move: iAct - iPrev,
+        c_momentum: cm, c_pull: cp, c_inflation: ci, c_growth: cg, c_stance: cs, pi_rule: piRule,
+        core: x.core[t], headline: x.headline[t], gdp: x.gdp[t], g_star: x.g_star[t] });
+      dPrev = d; iPrev = iAct;
+    }
+    return { rows, params: p };
+  }
+  function horizonAverage(rows, years) {
+    let prod = 1; for (let i = 0; i < 4 * years; i++) prod *= 1 + rows[i].rate / 400;
+    return (Math.pow(prod, 1 / years) - 1) * 100;
+  }
+  function diagnostics(p) {
+    const a1 = 1 + p.rho - p.lam, a2 = -p.rho, disc = a1 * a1 + 4 * a2;
+    const modulus = disc >= 0 ? Math.max(Math.abs((a1 + Math.sqrt(disc)) / 2), Math.abs((a1 - Math.sqrt(disc)) / 2)) : Math.sqrt(-a2);
+    let xp = 1, x = 1, k = 0, minx = 0;
+    for (k = 1; k < 200; k++) { const xn = a1 * x + a2 * xp; xp = x; x = xn; if (Math.abs(x) <= 0.5) break; }
+    // overshoot: run longer to find most negative deviation
+    xp = 1; x = 1; for (let j = 0; j < 80; j++) { const xn = a1 * x + a2 * xp; xp = x; x = xn; minx = Math.min(minx, x); }
+    return { modulus, halfLifeQ: k, oscillates: disc < 0, overshoot: -minx, stable: modulus < 1 };
+  }
+  // Monthly CPI builder: port of tools/cpi_monthly.py
+  const OBS_HEAD_MM = [0.1, 0.1, 0.3, 0.2, 0.3, 0.9, 0.6, 0.5, -0.4, 0.1, 0.4, 0.6];
+  const OBS_CORE_MM = [0.15, 0.15, 0.2, 0.3, 0.2, 0.2, 0.4, 0.2, 0.0, 0.2, 0.3, 0.3];
+  const OBS_HEAD_YY = [2.4, 2.4, 3.3, 3.8, 4.2, 3.5, 3.4, 3.4, 3.7];
+  const OBS_CORE_YY = [2.5, 2.5, 2.6, 2.8, 2.9, 2.6, 2.5, 2.4, 2.6];
+  const W = { core: 0.795, food: 0.135, energy: 0.07 };
+  function cpiBuild(a, data) {
+    const D = data || { head_mm: OBS_HEAD_MM, core_mm: OBS_CORE_MM, head_yy: OBS_HEAD_YY, core_yy: OBS_CORE_YY, weights: W };
+    const w = D.weights, nObs = D.head_yy.length, nProj = 36 - nObs, k27 = 23 - nObs, k28 = 35 - nObs;
+    const mm = x => (Math.pow(1 + x / 100, 1 / 12) - 1) * 100;
+    const pc = [], ph = [];
+    for (let k = 0; k < nProj; k++) {
+      const c = interp(k, [0, k27, k28], [a.core_q4_26, a.core_end27, a.core_end28]);
+      const e = k <= k27 ? a.energy27 : a.energy28;
+      const em = mm(e) + (k === 0 ? (a.energy_jump || 0) : 0);
+      pc.push(mm(c)); ph.push(w.core * mm(c) + w.food * mm(a.food) + w.energy * em);
+    }
+    const yy = (obs, proj) => { const all = obs.concat(proj), out = [];
+      for (let i = 12; i < all.length; i++) { let p = 1; for (let j = i - 11; j <= i; j++) p *= 1 + all[j] / 100; out.push((p - 1) * 100); } return out; };
+    const res = {};
+    [["headline", D.head_yy, D.head_mm, ph], ["core", D.core_yy, D.core_mm, pc]].forEach(([name, oyy, omm, proj]) => {
+      const m = oyy.concat(yy(omm, proj));               // Jan 2026 .. Dec 2028
+      const q = {}, ann = {}, months = [];
+      m.forEach((v, i) => { const y = 2026 + Math.floor(i / 12), qq = y + "Q" + (Math.floor((i % 12) / 3) + 1);
+        (q[qq] = q[qq] || []).push(v); (ann[y] = ann[y] || []).push(v); months.push({ m: y + "-" + String(i % 12 + 1).padStart(2, "0"), v }); });
+      const avg = arr => arr.reduce((s, x) => s + x, 0) / arr.length;
+      res[name] = { monthly: months, quarterly: Object.fromEntries(Object.entries(q).map(([k, v]) => [k, +avg(v).toFixed(2)])),
+        annual: Object.fromEntries(Object.entries(ann).map(([k, v]) => [k, avg(v)])) };
+    });
+    return res;
+  }
+  root.CashPath = { simulate, horizonAverage, diagnostics, qAdd, cpiBuild };
+})(typeof window !== "undefined" ? window : globalThis);
+
+</script>
+<script>
+const CFG = {"country": "JP", "inflation_basis": "CPI (headline = ex fresh food, the Bank's forecast measure; core = ex fresh food and energy; both institutional-factor-adjusted)", "params": {"anchor_nominal": 1.75, "pi_star": 2.0, "lam": 0.2, "rho": 0.0, "phi_pi": 0.5, "phi_g": 0.75, "theta": 1.0, "lead_q": 4, "lead_g_q": 2, "elb": -0.1, "grid_base": 0.0, "gap_halflife_q": 4, "stance_gap0": 0.0, "stance_halflife_q": 6, "step": 0.25, "step_band": 0.025, "max_move_per_meeting": 0.25, "meetings_first_q": 1, "meetings_per_q": 2, "step_horizon_q": 41}, "start": {"quarter": "2026Q3", "rate": 1.25, "last_change": 0.25, "gdp": 1.0, "core": 2.2, "headline": 1.9}, "g_star": {"2026": 0.6}, "history": {"headline": {"2026Q1": 1.9, "2026Q2": 1.7, "2026Q3": 1.9}, "core": {"2026Q1": 2.3, "2026Q2": 2.1, "2026Q3": 2.2}, "gdp": {"2026Q1": 1.2, "2026Q2": 1.1, "2026Q3": 1.0}}, "ranges": {"lam": [0.1, 0.3], "rho": [0.0, 0.3], "phi_pi": [0.0, 1.0], "phi_g": [0.3, 1.1]}, "scenarios": {"house_baseline": {"description": "Bank of Japan October 2026 Outlook Report medians, mapped to calendar years - GDP 1.0, 0.7, 0.8, then 0.7 decaying to 0.6; CPI ex fresh food 2.0, 2.6, 2.1 then 2.0; CPI ex fresh food and energy 2.2, 2.7, 2.3 then 2.0. The Bank responds to the ex-energy measure four quarters ahead and growth two quarters ahead.", "basis": "annual_average", "gdp": {"2026": 1.0, "2027": 0.7, "2028": 0.8, "2029": 0.7, "2030": 0.6, "2031": 0.6, "2032": 0.6, "2033": 0.6, "2034": 0.6, "2035": 0.6, "2036": 0.6}, "headline": {"2026": 2.0, "2027": 2.6, "2028": 2.1, "2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "core": {"2026": 2.2, "2027": 2.7, "2028": 2.3, "2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}}, "boj_exff_reactive": {"description": "As the baseline, but the Bank responds to CPI excluding fresh food (theta = 0), which it projects falling to 2.0% in fiscal 2028, rather than to the ex-energy measure.", "basis": "annual_average", "gdp": {"2026": 1.0, "2027": 0.7, "2028": 0.8, "2029": 0.7, "2030": 0.6, "2031": 0.6, "2032": 0.6, "2033": 0.6, "2034": 0.6, "2035": 0.6, "2036": 0.6}, "headline": {"2026": 2.0, "2027": 2.6, "2028": 2.1, "2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "core": {"2026": 2.2, "2027": 2.7, "2028": 2.3, "2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "overrides": {"theta": 0.0}}, "consumption_tax_unadjusted": {"description": "The proposed temporary consumption-tax cut on food, applied to unadjusted CPI - both measures about 1.3pp lower in 2027 (Bank estimate). Shows what a rule run on unadjusted data would do; the Bank looks through institutional factors, so this is a trap, not a forecast.", "basis": "annual_average", "gdp": {"2026": 1.0, "2027": 0.7, "2028": 0.8, "2029": 0.7, "2030": 0.6, "2031": 0.6, "2032": 0.6, "2033": 0.6, "2034": 0.6, "2035": 0.6, "2036": 0.6}, "headline": {"2026": 2.0, "2027": 1.3, "2028": 2.1, "2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "core": {"2026": 2.2, "2027": 1.4, "2028": 2.3, "2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}}, "sticky_underlying": {"description": "Wage-price mechanism firms up - ex-energy CPI 3.0 in 2027 and 2.8 in 2028, ex-fresh-food 2.9 and 2.5; GDP as baseline. The upside risk the Bank names in the October Report.", "basis": "annual_average", "gdp": {"2026": 1.0, "2027": 0.7, "2028": 0.8, "2029": 0.7, "2030": 0.6, "2031": 0.6, "2032": 0.6, "2033": 0.6, "2034": 0.6, "2035": 0.6, "2036": 0.6}, "headline": {"2026": 2.0, "2027": 2.9, "2028": 2.5, "2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "core": {"2026": 2.2, "2027": 3.0, "2028": 2.8, "2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}}, "energy_fades": {"description": "Crude falls back and the yen stabilises - ex-fresh-food CPI 2.0 in 2027 and 1.9 in 2028, ex-energy 2.4 and 2.1; GDP 0.9 in 2027 as the terms-of-trade drag reverses.", "basis": "annual_average", "gdp": {"2026": 1.0, "2027": 0.9, "2028": 0.8, "2029": 0.7, "2030": 0.6, "2031": 0.6, "2032": 0.6, "2033": 0.6, "2034": 0.6, "2035": 0.6, "2036": 0.6}, "headline": {"2026": 2.0, "2027": 2.0, "2028": 1.9, "2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "core": {"2026": 2.2, "2027": 2.4, "2028": 2.1, "2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}}, "slowdown_2027": {"description": "Middle East shock and weaker external demand - GDP 0.2 in 2027 and 0.5 in 2028; ex-energy CPI 2.3 and 2.0, ex-fresh-food 2.4 and 1.8.", "basis": "annual_average", "gdp": {"2026": 1.0, "2027": 0.2, "2028": 0.5, "2029": 0.7, "2030": 0.6, "2031": 0.6, "2032": 0.6, "2033": 0.6, "2034": 0.6, "2035": 0.6, "2036": 0.6}, "headline": {"2026": 2.0, "2027": 2.4, "2028": 1.8, "2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "core": {"2026": 2.2, "2027": 2.3, "2028": 2.0, "2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}}, "higher_neutral": {"description": "As the baseline, with the anchor at 2.25%, the upper part of the Bank's 1.1-2.5% neutral range, as argued by board member Takata.", "basis": "annual_average", "gdp": {"2026": 1.0, "2027": 0.7, "2028": 0.8, "2029": 0.7, "2030": 0.6, "2031": 0.6, "2032": 0.6, "2033": 0.6, "2034": 0.6, "2035": 0.6, "2036": 0.6}, "headline": {"2026": 2.0, "2027": 2.6, "2028": 2.1, "2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "core": {"2026": 2.2, "2027": 2.7, "2028": 2.3, "2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "overrides": {"anchor_nominal": 2.25}}}, "meta": {"pretty": {"house_baseline": "BoJ October 2026 medians", "boj_exff_reactive": "BoJ reacts to CPI ex fresh food", "consumption_tax_unadjusted": "Consumption-tax cut, unadjusted CPI", "sticky_underlying": "Sticky underlying inflation", "energy_fades": "Energy shock fades", "slowdown_2027": "Slowdown in 2027", "higher_neutral": "Higher neutral rate (2.25%)"}, "bench": {"2027Q4": 1.5}, "bench_label": "IMF April 2026 Article IV path (illustrative)", "price": "CPI", "gdp_label": "Real GDP", "point_rate": true, "lead_slider": true, "rate_phrase": "the call-rate target", "stance_hint": "Bank's own target minus ours today, pp", "no_builder": true, "builder_default": {"core_q4_26": 2.4, "core_end27": 2.7, "core_end28": 2.3, "energy27": 0.0, "energy28": 2.0, "food": 3.0, "energy_jump": 0.0}}};
+const RANGES = {"lam": [0.1, 0.3], "rho": [0.0, 0.3], "phi_pi": [0.0, 1.0], "phi_g": [0.3, 1.1]};
+const META = CFG.meta || {};
+const fmtR = v => Math.abs(v * 100 - Math.round(v * 100)) < 1e-9 ? v.toFixed(2) : v.toFixed(3);
+const BENCH = META.bench || {};
+const PRICE = META.price || "CPI";
+const CPIDATA = CFG.cpi_data || null;
+const cpiB = b => CashPath.cpiBuild(b, CPIDATA);
+const names = Object.keys(CFG.scenarios);
+const YEARS = [2026, 2027, 2028, 2029, 2030];
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const label = k => k.replace(/_/g, " ").replace(/^./, c => c.toUpperCase()).replace("2027", "2027").replace("3 2", "3.2");
+const NS = "http://www.w3.org/2000/svg";
+const PRETTY = META.pretty || {};
+const pretty = n => PRETTY[n] || label(n);
+
+let state;
+function loadScenario(n){
+  const s = CFG.scenarios[n], p = Object.assign({}, CFG.params, s.overrides || {});
+  const yv = (d, y) => d && d[y] != null ? d[y] : null;
+  const lrOf = d => yv(d, 2031) ?? yv(d, 2030) ?? p.pi_star;
+  state = { name: n, params: p, mode: s.cpi_builder ? "builder" : "annual",
+    builder: Object.assign({}, META.builder_default || { core_q4_26: 2.8, core_end27: 2.7, core_end28: 2.6, energy27: 0, energy28: 2.5, food: 2.8 }, s.cpi_builder || {}),
+    gdp: {}, headline: {}, core: {}, g_star: Object.values(s.g_star || CFG.g_star).slice(-1)[0] ?? 2.0 };
+  YEARS.forEach(y => { state.gdp[y] = yv(s.gdp, y); state.headline[y] = yv(s.headline, y); state.core[y] = yv(s.core, y); });
+  state.gdp.lr = lrOf(s.gdp) ?? state.g_star; state.headline.lr = lrOf(s.headline); state.core.lr = lrOf(s.core);
+  if (state.mode === "builder") { const b = cpiB(state.builder); [2026, 2027, 2028].forEach(y => { state.headline[y] = +b.headline.annual[y].toFixed(2); state.core[y] = +b.core.annual[y].toFixed(2); }); }
+}
+function scFromState(st){
+  const full = v => { const d = {}; for (let y = 2026; y <= 2036; y++) { const x = y <= 2030 ? st[v][y] : st[v].lr; if (x != null && !isNaN(x)) d[y] = x; } return d; };
+  const scn = CFG.scenarios[st.name] || {};
+  const sc = { start: Object.assign({}, CFG.start, scn.start || {}), history: Object.assign({}, CFG.history, scn.history || {}), basis: "annual_average", g_star: { 2026: st.g_star }, gdp: full("gdp") };
+  if (st.mode === "builder") {
+    const b = cpiB(st.builder), q = {};
+    ["headline", "core"].forEach(v => { q[v] = {}; Object.entries(b[v].quarterly).forEach(([k, val]) => { if (k >= "2026Q4") q[v][k] = val; });
+      sc[v] = {}; for (let y = 2029; y <= 2036; y++) sc[v][y] = y <= 2030 ? st[v][y] : st[v].lr; });
+    sc.quarterly = q;
+  } else { sc.headline = full("headline"); sc.core = full("core"); const q0 = (CFG.scenarios[st.name] || {}).quarterly; if (q0) sc.quarterly = q0; }
+  return sc;
+}
+function stateFor(n){ const save = state; loadScenario(n); const st = state; state = save; return st; }
+function run(st, pOver){ return CashPath.simulate(scFromState(st), Object.assign({}, st.params, pOver || {}), 41); }
+
+/* ---------- charts ---------- */
+function el(tag, attrs, parent){ const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function niceTicks(lo, hi, n){ const span = hi - lo || 1, raw = span / n, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1,2,2.5,5,10].map(m => m*mag).find(s => s >= raw) || raw; const t = [];
+  for (let v = Math.ceil(lo/step)*step; v <= hi + 1e-9; v += step) t.push(+v.toFixed(6)); return { t, lo: Math.floor(lo/step)*step, hi: Math.ceil(hi/step)*step }; }
+function drawChart(hostId, labels, series, opts){
+  opts = opts || {}; const host = document.getElementById(hostId); host.innerHTML = "";
+  const W = host.parentElement.clientWidth || 700, H = (host.parentElement.clientHeight || 300) - (opts.legend ? 28 : 0), m = { l: 40, r: 12, t: 10, b: 24 };
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H }, host);
+  let vals = []; series.forEach(s => s.values.forEach(v => v != null && vals.push(v))); (opts.points || []).forEach(p => vals.push(p.v));
+  if (opts.bars) labels.forEach((_, i) => { let p = 0, n = 0; opts.bars.forEach(b => { const v = b.values[i]; v > 0 ? p += v : n += v; }); vals.push(p, n); });
+  if (opts.zero) vals.push(0);
+  let lo = Math.min(...vals), hi = Math.max(...vals);
+  if (opts.minSpan && hi - lo < opts.minSpan) { const mid = (hi + lo) / 2; lo = mid - opts.minSpan / 2; hi = mid + opts.minSpan / 2; }
+  const yt = niceTicks(lo, hi, 5), xs = opts.xNumeric;
+  const X = i => m.l + (W - m.l - m.r) * (i + 0.5) / labels.length, Y = v => m.t + (H - m.t - m.b) * (yt.hi - v) / (yt.hi - yt.lo || 1);
+  yt.t.forEach(v => { el("line", { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: css("--rule"), "stroke-width": v === 0 ? 1.2 : 0.6 }, svg);
+    const tx = el("text", { x: m.l - 6, y: Y(v) + 3.5, "text-anchor": "end" }, svg); tx.textContent = Math.abs(v) < 1 && v !== 0 ? v.toFixed(2) : v.toFixed(1); });
+  labels.forEach((l, i) => { const show = xs ? (i % 4 === 0) : l.endsWith("Q4"); if (show) { const tx = el("text", { x: X(i), y: H - 6, "text-anchor": "middle" }, svg); tx.textContent = xs ? l : l.slice(0, 4); } });
+  if (opts.bars) { const bw = (W - m.l - m.r) / labels.length * 0.72;
+    labels.forEach((_, i) => { let p = 0, n = 0; opts.bars.forEach(b => { const v = b.values[i]; if (!v) return;
+      const y0 = v > 0 ? p : n, y1 = y0 + v; v > 0 ? p = y1 : n = y1;
+      el("rect", { x: X(i) - bw/2, y: Math.min(Y(y0), Y(y1)), width: bw, height: Math.max(0.5, Math.abs(Y(y0) - Y(y1))), fill: b.color }, svg); }); }); }
+  series.forEach(s => { let d = "", pen = false, last = null; s.values.forEach((v, i) => { if (v == null) { pen = false; return; }
+      if (pen && s.step && last != null && v !== last) d += "L" + X(i).toFixed(1) + "," + Y(last).toFixed(1);
+      d += (pen ? "L" : "M") + X(i).toFixed(1) + "," + Y(v).toFixed(1); pen = true; last = v; });
+    el("path", { d, fill: "none", stroke: s.color, "stroke-width": s.width || 1.6, "stroke-dasharray": s.dash || "", "stroke-linejoin": "round" }, svg); });
+  (opts.points || []).forEach(p => { el("circle", { cx: X(p.i), cy: Y(p.v), r: 4, fill: p.color, stroke: css("--paper"), "stroke-width": 1.2 }, svg); });
+  if (opts.legend) { const lg = document.createElement("div"); lg.className = "legend";
+    lg.innerHTML = series.filter(s => s.label).map(s => `<span style="--sw:${s.color}">${s.label}</span>`).join("") + (opts.points && opts.points.length ? `<span style="--sw:${opts.points[0].color}">${opts.pointLabel}</span>` : ""); host.appendChild(lg); }
+  const tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; host.style.position = "relative"; host.appendChild(tip);
+  const guide = el("line", { y1: m.t, y2: H - m.b, stroke: css("--muted"), "stroke-width": 0.6, visibility: "hidden" }, svg);
+  svg.addEventListener("mousemove", e => { const r = svg.getBoundingClientRect(); const x = (e.clientX - r.left) * W / r.width;
+    const i = Math.max(0, Math.min(labels.length - 1, Math.round((x - m.l) / ((W - m.l - m.r) / labels.length) - 0.5)));
+    guide.setAttribute("x1", X(i)); guide.setAttribute("x2", X(i)); guide.setAttribute("visibility", "visible");
+    const items = (opts.bars ? opts.bars.concat(series) : series).filter(s => s.label && s.values[i] != null).map(s => `${s.label}: ${(+s.values[i]).toFixed(2)}`);
+    tip.innerHTML = `<b>${labels[i]}</b><br>` + items.join("<br>"); tip.hidden = false;
+    tip.style.left = Math.max(0, Math.min((X(i) / W) * r.width + 10, r.width - tip.offsetWidth - 4)) + "px"; tip.style.top = "6px"; });
+  svg.addEventListener("mouseleave", () => { tip.hidden = true; guide.setAttribute("visibility", "hidden"); });
+}
+
+/* ---------- controls ---------- */
+const sel = document.getElementById("scn");
+names.forEach(n => { const o = document.createElement("option"); o.value = n; o.textContent = pretty(n); sel.appendChild(o); });
+const SL = [
+  ["lam", "Adjustment speed <i>λ</i>", 0.05, 0.6, 0.01, "share of gap to target closed per quarter"],
+  ["rho", "Momentum <i>ρ</i>", 0, 0.7, 0.01, "share of last quarter's change carried forward"],
+  ["phi_pi", "Inflation response <i>φ</i><sub>π</sub>", 0, 2, 0.05, "long-run response is 1 + φπ"],
+  ["phi_g", "Growth response <i>φ</i><sub>g</sub>", 0, 2, 0.05, "response to growth minus potential"],
+  ["theta", "Look-through <i>θ</i>", 0, 1, 0.05, "1 = core, 0 = headline"],
+  ["stance_gap0", "Starting stance <i>s</i><sub>0</sub>", -1.5, 1.5, 0.05, META.stance_hint || "Fed's own target minus ours today, pp"],
+].concat(META.lead_slider ? [["lead_q", "Inflation lead <i>k</i><sub>π</sub>", 0, 8, 1, "quarters ahead of the inflation forecast the rule uses"], ["lead_g_q", "Growth lead <i>k</i><sub>g</sub>", 0, 8, 1, "quarters ahead of the growth forecast the rule uses"]] : []);
+const box = document.getElementById("sliders");
+SL.forEach(([k, nm, lo, hi, st, hint]) => {
+  const d = document.createElement("div"); d.className = "slider"; const r = RANGES[k];
+  if (r && r[1] > hi) hi = Math.ceil(r[1] * 1.15);
+  const band = r ? `<div class="lit" style="left:${(r[0]-lo)/(hi-lo)*100}%;width:${(r[1]-r[0])/(hi-lo)*100}%"></div>` : "";
+  d.innerHTML = `<span class="name">${nm}</span><output id="o_${k}"></output><div class="track">${band}<input type="range" id="s_${k}" min="${lo}" max="${hi}" step="${st}" aria-label="${k}"></div><span class="hint">${hint}${r ? ` · evidence ${r[0]}–${r[1]}` : ""}</span>`;
+  box.appendChild(d);
+  d.querySelector("input").addEventListener("input", e => { state.params[k] = +e.target.value; render(); });
+});
+const BLD = META.builder_fields || [["core_q4_26","Core, Q4-26"],["core_end27","Core, end-27"],["core_end28","Core, end-28"],["energy27","Energy, to end-27"],["energy28","Energy, 2028"],["food","Food"]];
+document.getElementById("builder").innerHTML = BLD.map(([k, n]) => `<div><label for="b_${k}">${n}</label><input type="number" step="0.1" id="b_${k}"></div>`).join("") + `<p class="note" style="grid-column:1/-1;margin:0">${META.builder_note || "Annualised monthly momentum, %. Oil flat means energy 0."}</p>`;
+BLD.forEach(([k]) => document.getElementById("b_" + k).addEventListener("change", e => { const v = parseFloat(e.target.value); if (!isNaN(v)) state.builder[k] = v; syncBuilderAnnual(); renderInputs(); render(); }));
+function syncBuilderAnnual(){ if (state.mode !== "builder") return; const b = cpiB(state.builder); [2026, 2027, 2028].forEach(y => { state.headline[y] = +b.headline.annual[y].toFixed(2); state.core[y] = +b.core.annual[y].toFixed(2); }); }
+if (META.no_builder) { document.getElementById("mBuild").parentElement.hidden = true; const h = document.getElementById("mBuild").parentElement.previousElementSibling; if (h) h.hidden = true; }
+function setMode(m){ state.mode = m; if (m === "builder") syncBuilderAnnual(); document.getElementById("mBuild").classList.toggle("on", m === "builder"); document.getElementById("mAnn").classList.toggle("on", m === "annual");
+  document.getElementById("builder").hidden = m !== "builder"; renderInputs(); render(); }
+document.getElementById("mBuild").addEventListener("click", () => setMode("builder"));
+document.getElementById("mAnn").addEventListener("click", () => setMode("annual"));
+[["a_anchor","anchor_nominal"],["a_pi","pi_star"]].forEach(([id, k]) => document.getElementById(id).addEventListener("change", e => { const v = parseFloat(e.target.value); if (!isNaN(v)) { state.params[k] = v; render(); } }));
+document.getElementById("a_g").addEventListener("change", e => { const v = parseFloat(e.target.value); if (!isNaN(v)) { state.g_star = v; render(); } });
+
+function renderInputs(){
+  const t = document.getElementById("inputs"), rowsY = YEARS.concat(["lr"]), VARS = [["gdp", META.gdp_label || "Real GDP"],["headline","Headline " + PRICE],["core","Core " + PRICE]];
+  let h = `<tr><th>Year</th>${VARS.map(([, nm]) => `<th>${nm}</th>`).join("")}</tr>`;
+  rowsY.forEach(y => {
+    h += `<tr><td>${y === "lr" ? "2031+" : y}</td>` + VARS.map(([v, nm]) => { const ro = state.mode === "builder" && v !== "gdp" && [2026, 2027, 2028].includes(y);
+      const val = state[v][y]; return `<td><input type="number" step="0.1" id="in_${v}_${y}" value="${val == null ? "" : (+val).toFixed(ro ? 2 : 1)}" ${ro ? "readonly title=\"From the CPI builder\"" : ""} aria-label="${nm} ${y === "lr" ? "2031 onwards" : y}"></td>`; }).join("") + `</tr>`;
+  });
+  t.innerHTML = h;
+  document.getElementById("roNote").textContent = state.mode === "builder" ? "Dashed cells for headline and core in 2026–2028 come from the " + PRICE + " builder." : "";
+  t.querySelectorAll("input:not([readonly])").forEach(inp => inp.addEventListener("change", () => {
+    const [, v, y] = inp.id.split("_"); const val = parseFloat(inp.value); if (isNaN(val)) return; state[v][y === "lr" ? "lr" : +y] = val; render(); }));
+}
+function syncControls(){
+  const p = state.params;
+  SL.forEach(([k]) => { document.getElementById("s_" + k).value = p[k] ?? 0; document.getElementById("o_" + k).textContent = (k === "lead_q" || k === "lead_g_q") ? String(p[k] ?? 0) : (+(p[k] ?? 0)).toFixed(2); });
+  BLD.forEach(([k]) => document.getElementById("b_" + k).value = state.builder[k]);
+  document.getElementById("a_anchor").value = p.anchor_nominal; document.getElementById("a_pi").value = p.pi_star; document.getElementById("a_g").value = state.g_star;
+  document.getElementById("mBuild").classList.toggle("on", state.mode === "builder"); document.getElementById("mAnn").classList.toggle("on", state.mode === "annual");
+  document.getElementById("builder").hidden = state.mode !== "builder";
+  document.getElementById("steps").classList.toggle("on", p.step > 0); document.getElementById("steps").textContent = p.step > 0 ? "25bp steps on" : "25bp steps off";
+}
+let compare = false;
+sel.addEventListener("change", () => { loadScenario(sel.value); syncControls(); renderInputs(); render(); });
+document.getElementById("reset").addEventListener("click", () => { loadScenario(sel.value); syncControls(); renderInputs(); render(); });
+document.getElementById("steps").addEventListener("click", () => { state.params.step = state.params.step > 0 ? 0 : 0.25; syncControls(); render(); });
+document.getElementById("showAll").addEventListener("click", e => { compare = !compare; e.target.classList.toggle("on", compare); render(); });
+
+/* ---------- outputs ---------- */
+const rng = v => { const p = state.params; if (!(p.step > 0) || META.point_rate) return v.toFixed(2); const k = (v - (p.grid_base == null ? p.elb : p.grid_base)) / p.step; return Math.abs(k - Math.round(k)) < 1e-6 ? `${(v - p.step/2).toFixed(2)}–${(v + p.step/2).toFixed(2)}` : v.toFixed(2); };
+function summary(rows){
+  const ye = y => rows.find(r => r.quarter === y + "Q4").rate;
+  const inf10 = rows.slice(0, 40).reduce((s, r) => s + r.headline, 0) / 40;
+  return { ye26: ye(2026), ye27: ye(2027), ye28: ye(2028), ye29: ye(2029), a5: CashPath.horizonAverage(rows, 5), a10: CashPath.horizonAverage(rows, 10),
+    r10: CashPath.horizonAverage(rows, 10) - inf10, peak: Math.max(...rows.slice(0, 13).map(r => r.rate)), trough: Math.min(...rows.slice(0, 13).map(r => r.rate)),
+    moves: rows.slice(0, 13).reduce((a, r) => a + Math.round(Math.abs(r.move || 0) / 0.25), 0) };
+}
+function irf(p){
+  const out = { anchor: [], infl: [], gro: [] }, N = 20;
+  const sim = (x0, inf, gro) => { let x = x0, d = 0; const v = [];
+    for (let t = 0; t < N; t++) { const dd = p.rho * d + p.lam * (-x + (1 + p.phi_pi) * (t < 4 ? inf : 0) + p.phi_g * (t < 4 ? gro : 0)); x += dd; d = dd; v.push(x); } return v; };
+  out.anchor = sim(1, 0, 0); out.infl = sim(0, 1, 0); out.gro = sim(0, 0, 1); return out;
+}
+function render(){
+  const p = state.params, res = run(state), rows = res.rows, s = summary(rows), labels = rows.map(r => r.quarter);
+  document.getElementById("scnDesc").textContent = CFG.scenarios[state.name].description || "";
+  syncControls();
+  // KPIs
+  document.getElementById("kpis").innerHTML = [["YE 2026", rng(s.ye26)], ["YE 2027", rng(s.ye27)], ["YE 2028", rng(s.ye28)], ["5y avg", s.a5.toFixed(2), 1], ["10y avg", s.a10.toFixed(2), 1], ["10y avg real", s.r10.toFixed(2)], ["Peak to 2029", s.peak.toFixed(2)], ["25bp moves to 2029", s.moves]]
+    .map(([k, v, hl]) => `<div class="kpi${hl ? " hl" : ""}"><div class="k">${k}</div><div class="v">${v}</div></div>`).join("");
+  // Fig 1
+  const ser = [];
+  if (compare) names.filter(n => n !== state.name).forEach((n, k) => { const st = stateFor(n); st.params = Object.assign({}, st.params, { lam: p.lam, rho: p.rho, phi_pi: p.phi_pi, phi_g: p.phi_g, step: p.step, anchor_nominal: p.anchor_nominal, pi_star: p.pi_star, lead_q: p.lead_q || 0, lead_g_q: p.lead_g_q || 0 }, CFG.scenarios[n].overrides || {});
+    ser.push({ label: pretty(n), values: run(st).rows.map(r => r.rate), color: css("--muted"), width: 1, dash: (2 + k) + " 3", step: true }); });
+  ser.push({ label: "Anchor " + fmtR(p.anchor_nominal), values: rows.map(() => p.anchor_nominal), color: css("--anchor"), width: 1.3, dash: "6 4" });
+  if (p.step > 0) ser.push({ label: "Intended", values: rows.map(r => r.notional), color: css("--accent"), width: 1.1, dash: "3 3" });
+  ser.push({ label: pretty(state.name), values: rows.map(r => r.rate), color: css("--accent"), width: 2.8, step: true });
+  const pts = Object.entries(BENCH).map(([q, v]) => ({ i: labels.indexOf(q), v, color: css("--sep") })).filter(x => x.i >= 0);
+  drawChart("fig1", labels, ser, { legend: true, minSpan: 2, points: pts, pointLabel: META.bench_label || "Benchmark" });
+  const d = CashPath.diagnostics(p);
+  document.getElementById("diag").innerHTML = [`<span class="flag">Half-life with gaps closed: ${d.halfLifeQ} quarters</span>`,
+    1 + p.phi_pi > 1 ? `<span class="flag ok">Long-run inflation response ${(1 + p.phi_pi).toFixed(2)}</span>` : `<span class="flag warn">Long-run inflation response ${(1 + p.phi_pi).toFixed(2)}: fails Taylor principle</span>`,
+    d.stable ? "" : `<span class="flag warn">Unstable parameters</span>`,
+    Math.abs(state.headline.lr - p.pi_star) > 0.001 || Math.abs(state.core.lr - p.pi_star) > 0.001 ? `<span class="flag warn">Long-run inflation input ≠ π*: path will not settle at the anchor</span>` : "",
+    Math.abs(state.gdp.lr - state.g_star) > 0.001 ? `<span class="flag warn">Long-run growth ≠ potential: path will not settle at the anchor</span>` : "",
+    rows.some(r => r.notional < p.elb) ? `<span class="flag warn">${rows.filter(r => r.notional < p.elb).length} quarters at the lower bound</span>` : ""].join("");
+  // Fig 2
+  drawChart("fig2", labels, [{ label: "Total", values: rows.map(r => r.change), color: css("--ink"), width: 1.2 }], { zero: true, bars: [
+    { label: "Momentum", values: rows.map(r => r.c_momentum), color: css("--c-mom") }, { label: "Pull to anchor", values: rows.map(r => r.c_pull), color: css("--c-pull") },
+    { label: "Inflation gap", values: rows.map(r => r.c_inflation), color: css("--c-inf") }, { label: "Growth gap", values: rows.map(r => r.c_growth), color: css("--c-gro") },
+    { label: "Starting stance", values: rows.map(r => r.c_stance), color: css("--c-stn") }] });
+  // Fig 3 with observed 2026 quarters
+  const hq = Object.keys((CFG.history || {}).headline || {}).sort(), L3 = hq.concat(labels);
+  const HS = Object.assign({}, CFG.history, (CFG.scenarios[state.name] || {}).history || {});
+  const pre = v => hq.map(q => (HS[v] || {})[q] ?? null);
+  drawChart("fig3", L3, [
+    { label: "Headline " + PRICE, values: pre("headline").concat(rows.map(r => r.headline)), color: css("--c-mom"), width: 1.6 },
+    { label: "Core " + PRICE, values: pre("core").concat(rows.map(r => r.core)), color: css("--c-inf"), width: 2 },
+    { label: META.gdp_label || "Real GDP", values: pre("gdp").concat(rows.map(r => r.gdp)), color: css("--c-gro"), width: 1.8 },
+    { label: "π*", values: L3.map(() => p.pi_star), color: css("--anchor"), width: 1, dash: "6 4" },
+    { label: "g*", values: L3.map(() => state.g_star), color: css("--c-gro"), width: 1, dash: "3 3" }], { legend: true, zero: true });
+  // Fig 4
+  const ir = irf(p), L4 = Array.from({ length: 20 }, (_, i) => "Q" + (i + 1));
+  drawChart("fig4", L4, [{ label: "Start 1pp above anchor", values: ir.anchor, color: css("--accent"), width: 2 },
+    { label: "1pp core gap, 4 quarters", values: ir.infl, color: css("--c-gro"), width: 2 },
+    { label: "1pp growth gap, 4 quarters", values: ir.gro, color: css("--anchor"), width: 2 }], { legend: true, zero: true, xNumeric: true });
+  // live text
+  document.getElementById("ab5").textContent = s.a5.toFixed(2); document.getElementById("ab10").textContent = s.a10.toFixed(2);
+  document.getElementById("anc1").textContent = fmtR(p.anchor_nominal); document.getElementById("anc2").textContent = p.pi_star.toFixed(1);
+  document.getElementById("hl").textContent = d.halfLifeQ;
+  const cb = cpiB(state.builder);
+  const setT = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+  setT("b26", cb.headline.annual[2026].toFixed(1)); setT("b27", cb.headline.annual[2027].toFixed(1)); setT("b28", cb.headline.annual[2028].toFixed(1));
+  setT("c27", cb.core.annual[2027].toFixed(1));
+  const peakQ = rows.slice(0, 13).reduce((a, r) => r.rate > a.rate ? r : a, rows[0]);
+  document.getElementById("resText").innerHTML = `For the selected scenario (<b>${pretty(state.name)}</b>), ${META.rate_phrase || "the funds rate"} is ${rng(s.ye26)}% at end-2026, ${rng(s.ye27)}% at end-2027 and ${rng(s.ye28)}% at end-2028, peaking at ${s.peak.toFixed(META.point_rate ? 2 : 3)}% in ${peakQ.quarter} with ${s.moves} quarter-point moves to end-2029. It averages <span class="live">${s.a5.toFixed(2)}</span>% over five years and <span class="live">${s.a10.toFixed(2)}</span>% over ten, a real return of about ${s.r10.toFixed(2)}% against headline ${PRICE}. Table 1 runs every scenario under the same parameters.`;
+  // scenario table
+  let h = `<tr><th>Scenario</th><th>YE 2026</th><th>YE 2027</th><th>YE 2028</th><th>Peak</th><th>5y avg</th><th>10y avg</th></tr>`;
+  names.forEach(n => { const st = n === state.name ? state : stateFor(n);
+    if (n !== state.name) st.params = Object.assign({}, st.params, { lam: p.lam, rho: p.rho, phi_pi: p.phi_pi, phi_g: p.phi_g, step: p.step, anchor_nominal: p.anchor_nominal, pi_star: p.pi_star, stance_gap0: p.stance_gap0, lead_q: p.lead_q || 0, lead_g_q: p.lead_g_q || 0 }, CFG.scenarios[n].overrides || {});
+    const z = summary(run(st).rows);
+    h += `<tr${n === state.name ? ' class="chosen"' : ""}><td>${pretty(n)}</td><td class="num">${rng(z.ye26)}</td><td class="num">${rng(z.ye27)}</td><td class="num">${rng(z.ye28)}</td><td class="num">${z.peak.toFixed(2)}</td><td class="num">${z.a5.toFixed(2)}</td><td class="num">${z.a10.toFixed(2)}</td></tr>`; });
+  document.getElementById("scnTable").innerHTML = `<caption class="note" style="caption-side:top;text-align:left;padding-bottom:4px">Table 1. Scenarios under current parameters</caption>` + h;
+  // sensitivity table
+  const sens = [["Central", {}], ["λ = " + RANGES.lam[0], { lam: RANGES.lam[0] }], ["λ = " + RANGES.lam[1], { lam: RANGES.lam[1] }], ["ρ = " + RANGES.rho[0], { rho: RANGES.rho[0] }], ["ρ = " + RANGES.rho[1], { rho: RANGES.rho[1] }],
+    ["1+φπ = " + (1 + RANGES.phi_pi[0]).toFixed(1), { phi_pi: RANGES.phi_pi[0] }], ["1+φπ = " + (1 + RANGES.phi_pi[1]).toFixed(1), { phi_pi: RANGES.phi_pi[1] }],
+    ["φg = " + RANGES.phi_g[0], { phi_g: RANGES.phi_g[0] }], ["φg = " + RANGES.phi_g[1], { phi_g: RANGES.phi_g[1] }],
+    ["θ = 1 (core)", { theta: 1 }], ["θ = 0 (headline)", { theta: 0 }],
+    ...(META.lead_slider ? [["Leads 0 (current data)", { lead_q: 0, lead_g_q: 0 }], ["Inflation lead 2", { lead_q: 2 }], ["Inflation lead 6", { lead_q: 6 }]] : []),
+    ["Anchor −25bp", { anchor_nominal: p.anchor_nominal - 0.25 }], ["Anchor +25bp", { anchor_nominal: p.anchor_nominal + 0.25 }], ["No 25bp steps", { step: 0 }]];
+  const base = summary(rows);
+  let t = `<tr><th>Setting</th><th>YE 2027</th><th>Peak</th><th>5y avg</th><th>10y avg</th><th>Δ 10y, bp</th></tr>`;
+  sens.forEach(([nm, ov]) => { const z = summary(run(state, ov).rows); t += `<tr${nm === "Central" ? ' class="chosen"' : ""}><td>${nm}</td><td class="num">${rng(z.ye27)}</td><td class="num">${z.peak.toFixed(2)}</td><td class="num">${z.a5.toFixed(2)}</td><td class="num">${z.a10.toFixed(2)}</td><td class="num">${Math.round((z.a10 - base.a10) * 100)}</td></tr>`; });
+  document.getElementById("sensTable").innerHTML = t;
+}
+loadScenario(names[0]); syncControls(); renderInputs(); render();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 150); });
+
+</script>
+
+</body></html>
