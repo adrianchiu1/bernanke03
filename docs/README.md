@@ -1,6 +1,6 @@
 # Policy path framework note
 
-`policy_path_framework.tex` documents the error-correction cash-rate rule used in the three Policy Path Lab HTML files (US, ECB, BoE) and proposes a provisional calibration for Japan.
+`policy_path_framework.tex` documents the error-correction cash-rate rule used in the four Policy Path Lab HTML files (US, ECB, BoE, BoJ); the BoJ calibration is provisional.
 
 Build (TeX Live with biber and latexmk):
 

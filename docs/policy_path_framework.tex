@@ -113,7 +113,7 @@ House forecasts arrive as calendar-year averages of year-on-year rates (the Cons
 \section{Calibration by market}
 \label{sec:calib}
 
-Table~\ref{tab:calib} gives the central calibration for the four markets. The US, euro area and UK values are those in the interactive labs; the Japan column is a provisional calibration proposed in this note (Section~\ref{sec:japan}), not yet implemented in a lab. The evidence behind each parameter is summarised in the paragraphs that follow and tabulated study by study in Appendix~\ref{app:evidence}.
+Table~\ref{tab:calib} gives the central calibration for the four markets. The US, euro area and UK values are those in the interactive labs; the Japan column is the provisional calibration in the new BoJ lab, proposed in this note (Section~\ref{sec:japan}). The evidence behind each parameter is summarised in the paragraphs that follow and tabulated study by study in Appendix~\ref{app:evidence}.
 
 \begin{table}[htbp]
 \centering\footnotesize
@@ -169,7 +169,7 @@ Smoothing estimates imply $\lambda$ of 0.11--0.37; we take 0.20. Momentum is whe
 \subsection{Japan (provisional)}
 \label{sec:japan}
 
-There is no Bank of Japan lab yet. The calibration below is proposed so that the four markets can be run on a common footing; it should be treated as a starting point for the house economists rather than a finished estimate.
+The Bank of Japan lab was built alongside this note from the ECB template, with the calibration below. It should be treated as a starting point for the house economists rather than a finished estimate: no parameter is estimated on the current framework, and the inputs are the Bank's own medians rather than house forecasts.
 
 \emph{Why Japan is harder.} The policy rate was at or below zero from 1999 to 2024 with brief exceptions, so a conventional reaction function cannot be estimated on most of the available history, and \textcite{kuttnerposen2004} and \textcite{itomishkin2004} are sceptical that estimated Taylor rules say much about Japanese policy at all. \textcite{nakamurasteinsson2025} note the Taylor-rule fit is particularly poor for Japan. What evidence there is comes from four sources.
 \begin{itemize}
@@ -436,6 +436,31 @@ Japan (illustrative) & 1.75 & 1.50 & 2.00 & 2.00 & 1.75 & 1.75 & 1.82 & 1.92 & 1
 
 The pattern is the same everywhere: a modest near-term deviation from the anchor driven by the inflation and growth gaps, followed by convergence within about three years. The ten-year averages exceed the anchors by 10 to 15bp because the early years are above it.
 
+\subsection{Japan scenarios}
+
+Table~\ref{tab:jpscen} runs the seven scenarios in the BoJ lab under the central calibration. The first is the baseline above. The second changes only the inflation measure the rule reads. The third applies the Bank's estimate of the consumption-tax cut to unadjusted CPI and is included to show what a rule run on the wrong series would do, not as a forecast. The remaining four change the inputs or the anchor.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Japan scenarios under the central calibration, per cent}
+\label{tab:jpscen}
+\begin{tabular}{@{}L{62mm}rrrrrr@{}}
+\toprule
+Scenario & YE 2026 & YE 2027 & YE 2028 & Peak & 5y avg & 10y avg \\
+\midrule
+BoJ October 2026 medians (baseline) & 1.50 & 2.00 & 2.00 & 2.00 & 1.88 & 1.82 \\
+BoJ reacts to CPI ex fresh food ($\theta=0$) & 1.50 & 1.75 & 1.75 & 1.75 & 1.74 & 1.75 \\
+Consumption-tax cut on unadjusted CPI & 1.25 & 2.00 & 2.00 & 2.00 & 1.76 & 1.76 \\
+Sticky underlying inflation (3.0 in 2027, 2.8 in 2028) & 1.50 & 2.50 & 2.00 & 2.50 & 2.04 & 1.90 \\
+Energy shock fades & 1.50 & 1.75 & 1.75 & 1.75 & 1.75 & 1.76 \\
+Slowdown in 2027 (GDP 0.2, then 0.5) & 1.25 & 1.50 & 1.75 & 1.75 & 1.63 & 1.70 \\
+Higher neutral rate (anchor 2.25) & 1.50 & 2.25 & 2.25 & 2.25 & 2.22 & 2.24 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three results stand out. On the Bank's medians the rule continues the normalisation to 2.00\%, above the anchor, because projected underlying inflation is 2.7\% in fiscal 2027, and returns to the anchor by 2029. The choice of measure works in the opposite direction from the US: the ex-fresh-food measure is projected to fall faster than the ex-energy measure, so a rule that reads it stops at 1.75\% and lowers the five-year average by 14bp. And the consumption-tax scenario, run on unadjusted data, skips the December 2026 hike in response to a tax cut, which is the reason the lab should run on the institutional-factor-adjusted series. Across the scenarios the ten-year average spans 1.70 to 2.24, and the half-point change in the anchor accounts for most of the top of that range.
+
 \subsection{Which terms do the work}
 
 Table~\ref{tab:contrib} reports the mean absolute contribution of each term to the quarterly change in the intended rate over the first eight quarters.
@@ -498,7 +523,7 @@ Two readings follow for the capital markets line. The five- and ten-year cash as
 \item \emph{Momentum on notional versus implemented changes.} The code applies $\rho$ to the unrounded change. This is defensible, since the committee's intentions rather than its 25bp steps carry momentum, but it should be stated, and the alternative tested.
 \item \emph{UK inflation term.} With long-run CPI at $\pis=2.3$ and the forecast converging to it, the UK inflation term does nothing on the baseline. Either the house long-run CPI should be reconsidered against the 2\% target, or the UK note's description of the headline-versus-core judgement should be revised.
 \item \emph{Estimating $\theta$.} Re-estimate the US and euro-area reaction functions over 2021--26 with core and the headline--core wedge entered separately. This is the first episode since the 1970s with a wedge large enough to identify $\theta$.
-\item \emph{Japan lab.} Build the BoJ lab on the provisional calibration in Section~\ref{sec:japan}, with the institutional-factor-adjusted CPI series as inputs, fiscal-to-calendar conversion of the Outlook Report, and house forecasts when available. The widest uncertainty is the anchor, where the BoJ's own range spans 1.1--2.5\%.
+\item \emph{Japan lab.} The BoJ lab runs on the provisional calibration in Section~\ref{sec:japan} with hand-converted Outlook Report medians and approximate quarterly CPI history. It needs the institutional-factor-adjusted CPI series as inputs, an explicit fiscal-to-calendar conversion, house forecasts, and a monthly CPI builder with Japanese weights. The widest uncertainty is the anchor, where the BoJ's own range spans 1.1--2.5\%.
 \item \emph{Nonlinearity.} UK and Japanese evidence points to a stronger response outside a zone around target. A piecewise $\varphi_\pi$ would be a small extension and would matter in the sticky-inflation scenarios.
 \item \emph{Lower-bound memory.} The make-up feature through the unbounded intended rate is simple but untested against the 2009--21 UK and 1999--2024 Japanese episodes. A back-test would discipline $\lambda$ at the exit.
 \item \emph{Consistency conditions.} The anchor's inflation component must equal long-run inflation in the forecasts, and the US CPI $\pis$ must be consistent with the Fed's 2\% PCE objective through an explicit wedge assumption. Both should be checked each forecast round.
@@ -640,7 +665,7 @@ $\mathrm{grid}(\cdot)$, ELB & 25bp snapping with dead band and per-meeting cap; 
 \medskip
 \noindent\emph{Horizon average.} For $n$ years, $\bar r_n = \big[\prod_{q=1}^{4n}(1+i^{\mathrm{impl}}_q/400)\big]^{1/n}-1$.
 
-\noindent\emph{Code.} The simulation engine is identical, line for line, in the three market labs; this was verified by diffing the extracted functions. Parameters are the only market-specific content. The Japan results in this note were produced by running the same engine on the provisional parameter set.
+\noindent\emph{Code.} The simulation engine is identical, line for line, in the four market labs; this was verified by diffing the extracted functions. Parameters, scenarios and text are the only market-specific content.
 
 \printbibliography
 
