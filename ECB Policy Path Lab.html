@@ -1,0 +1,707 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>ECB Policy Path Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a working paper. One reading column for prose; figures and the input lab break out to a wider measure. */
+:root{
+  --bg:#FFFFFF; --paper:#FFFFFF; --panel:#F4F6F9; --ink:#17202B; --muted:#5A6778; --rule:#D9DFE6;
+  --accent:#1F4E79; --anchor:#A8641F; --pos:#3E7C59; --neg:#A23B3B; --band:#DCE6F1; --sep:#7A4E9C;
+  --c-mom:#8395AB; --c-pull:#A8641F; --c-inf:#1F4E79; --c-gro:#3E7C59; --c-stn:#A23B3B;
+  --f-text:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-ui:"IBM Plex Sans","Segoe UI",Arial,sans-serif;
+  --f-head:"IBM Plex Sans Condensed","Arial Narrow",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --f-math:"Cambria Math",Cambria,"Source Serif 4",Georgia,serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11161D; --paper:#11161D; --panel:#18212C; --ink:#E4E9EF; --muted:#9AA7B6; --rule:#2B3644;
+  --accent:#8DB6E0; --anchor:#E2A86F; --pos:#7FC09A; --neg:#E58C8C; --band:#22344A; --sep:#C3A0E0;
+  --c-mom:#94A4B8; --c-pull:#E2A86F; --c-inf:#8DB6E0; --c-gro:#7FC09A; --c-stn:#E58C8C; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11161D; --paper:#11161D; --panel:#18212C; --ink:#E4E9EF; --muted:#9AA7B6; --rule:#2B3644;
+  --accent:#8DB6E0; --anchor:#E2A86F; --pos:#7FC09A; --neg:#E58C8C; --band:#22344A; --sep:#C3A0E0;
+  --c-mom:#94A4B8; --c-pull:#E2A86F; --c-inf:#8DB6E0; --c-gro:#7FC09A; --c-stn:#E58C8C; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-text);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.paper{max-width:1080px;margin:0 auto}
+.col{max-width:70ch;margin:0 auto}
+h1{font-family:var(--f-head);font-weight:600;font-size:clamp(28px,4vw,38px);line-height:1.15;margin:0 0 8px;text-wrap:balance;letter-spacing:.005em}
+.byline{font-family:var(--f-ui);font-size:13px;color:var(--muted);margin-bottom:22px}
+h2{font-family:var(--f-head);font-weight:600;font-size:22px;margin:44px 0 10px;text-wrap:balance}
+h3{font-family:var(--f-head);font-weight:600;font-size:17.5px;margin:26px 0 6px;color:var(--ink)}
+p{margin:0 0 14px}
+.abstract{border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);padding:14px 0 6px;margin:0 0 8px}
+.abstract .ablab{font-family:var(--f-ui);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.live{font-family:var(--f-mono);font-size:.92em;background:var(--panel);border-radius:3px;padding:0 4px;white-space:nowrap}
+.eq{font-family:var(--f-math);font-size:18px;text-align:center;margin:14px 0 16px;overflow-x:auto;white-space:nowrap;padding:4px 0}
+.eq .n{font-family:var(--f-ui);font-size:13px;color:var(--muted);margin-left:1.5em}
+.cite{color:var(--muted)}
+sup,sub{line-height:0}
+a{color:var(--accent)}
+figure{margin:22px 0 26px}
+figcaption{font-family:var(--f-ui);font-size:13px;color:var(--muted);margin-top:6px;line-height:1.45}
+figcaption b{color:var(--ink);font-weight:600}
+.wide{max-width:1080px;margin-left:auto;margin-right:auto}
+.ui{font-family:var(--f-ui);font-size:14px;line-height:1.45}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-family:var(--f-ui);font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;border-bottom:1px solid var(--rule);text-align:right;vertical-align:top}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:500;font-size:12.5px;border-bottom:1px solid var(--ink)}
+table.text td,table.text th{text-align:left}
+td.num{font-family:var(--f-mono);font-size:12.5px;white-space:nowrap}
+tr.chosen td{font-weight:600;border-top:1px solid var(--ink)}
+.evid td.num{white-space:normal;min-width:70px}
+.evid td:nth-child(2){min-width:220px}
+.evid td:last-child{min-width:200px}
+/* lab */
+.lab{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:16px;display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:18px}
+@media (max-width:900px){.lab{grid-template-columns:1fr}}
+.lab h4{font-family:var(--f-ui);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px;font-weight:600}
+.lab h4:first-child{margin-top:0}
+.ctl{display:flex;flex-direction:column;gap:10px;min-width:0}
+label{font-family:var(--f-ui);font-size:12.5px;color:var(--muted)}
+select,input[type=number]{font:inherit;font-family:var(--f-ui);font-size:13.5px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:5px 7px;width:100%}
+input[type=number]{font-family:var(--f-mono);font-size:12.5px;text-align:right}
+input[type=number][readonly]{background:transparent;border-style:dashed;color:var(--muted)}
+select:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.slider{display:grid;grid-template-columns:1fr auto;gap:0 8px;align-items:center;font-family:var(--f-ui)}
+.slider .name{font-size:13px}
+.slider .name i{font-family:var(--f-math);font-size:14.5px}
+.slider output{font-family:var(--f-mono);font-size:12.5px}
+.slider .track{grid-column:1/-1;position:relative;height:22px}
+.slider .lit{position:absolute;top:8px;height:6px;background:var(--band);border-radius:3px;pointer-events:none}
+.slider input[type=range]{position:absolute;inset:0;width:100%;margin:0;background:transparent}
+.slider .hint{grid-column:1/-1;font-size:11.5px;color:var(--muted)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button{font:500 12.5px var(--f-ui);color:var(--accent);background:transparent;border:1px solid var(--accent);border-radius:4px;padding:5px 10px;cursor:pointer}
+button.on{background:var(--accent);color:var(--paper)}
+.seg{display:inline-flex;align-self:flex-start;border:1px solid var(--accent);border-radius:4px;overflow:hidden}
+.seg button{border:0;border-radius:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:end}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(108px,1fr));gap:10px;font-family:var(--f-ui)}
+.kpi{border-left:3px solid var(--rule);padding:1px 0 1px 9px}
+.kpi .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.kpi .v{font-family:var(--f-mono);font-size:17px;font-variant-numeric:tabular-nums}
+.kpi.hl{border-left-color:var(--anchor)}
+.chart{position:relative;height:320px}
+.chart.small{height:230px}
+.svghost,.svghost svg{width:100%;display:block}
+.svghost text{font-family:var(--f-ui);font-size:11px;fill:var(--muted)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--f-ui);font-size:12px;color:var(--muted);margin-top:4px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px;background:var(--sw)}
+.tip{position:absolute;pointer-events:none;background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:6px 8px;font-size:12px;font-family:var(--f-mono);white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.12);z-index:2}
+.flag{display:inline-block;font-family:var(--f-ui);font-size:11.5px;padding:1px 7px;border-radius:10px;border:1px solid var(--rule);color:var(--muted)}
+.flag.warn{border-color:var(--neg);color:var(--neg)}
+.flag.ok{border-color:var(--pos);color:var(--pos)}
+.note{font-family:var(--f-ui);font-size:12.5px;color:var(--muted)}
+.inputs td{padding:3px 4px}
+.inputs input{width:100%;min-width:56px}
+.inputs td:first-child{font-family:var(--f-mono);font-size:12.5px;white-space:nowrap}
+.refs p{padding-left:24px;text-indent:-24px;font-size:15px;margin:0 0 7px}
+.toc{font-family:var(--f-ui);font-size:13px;columns:2;column-gap:28px;margin:12px 0 0;padding-left:18px;color:var(--muted)}
+@media (max-width:600px){.toc{columns:1}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<article class="paper">
+<div class="col">
+  <h1>A rule-based path for euro-area cash rates</h1>
+  <div class="byline">Working paper for the capital markets line · Euro area, companion to the US paper · October 2026 · Interactive: every figure and number marked <span class="live">like this</span> updates with the inputs in the lab</div>
+
+  <div class="abstract">
+    <div class="ablab">Abstract</div>
+    <p>We extend the rule-based cash-rate framework built for the US to the ECB's deposit facility rate. The structure is unchanged: an error-correcting policy rule that responds to inflation and to growth relative to potential, converges to a fixed house anchor and is implemented in 25bp steps at Governing Council meetings. The calibration is not carried over. Euro-area reaction-function estimates differ from US ones in three ways that matter here. The ECB responds to <i>projected</i> rather than current inflation, its long-run response is larger, and there is no evidence of momentum in its rate changes. On the October 2026 house forecasts (2.0% anchor, German growth as the activity input), the path averages <span class="live" id="ab5">–</span>% over five years and <span class="live" id="ab10">–</span>% over ten, with the deposit rate staying close to 2.50% before easing to 2.25% in 2027–28. The house inflation figure for 2026 needs one decision before the path is used. Read as euro-area HICP, 2.7% requires inflation to fall from 3.8% in September to about 2.4% in the fourth quarter; read as German HICP, it is consistent with the data. The largest judgement is whether the ECB reacts to projected headline inflation, which base effects pull below target in late 2027, or to core. Market pricing of about three more hikes is consistent with the second.</p>
+  </div>
+  <ol class="toc">
+    <li><a href="#s1">Purpose and what differs from the US</a></li><li><a href="#lab">Interactive lab</a></li><li><a href="#s2">What the literature supports</a></li>
+    <li><a href="#s3">The rule and its calibration</a></li><li><a href="#s4">Inputs and conventions</a></li><li><a href="#s5">Results</a></li>
+    <li><a href="#s6">Sensitivity</a></li><li><a href="#s7">Limitations and next steps</a></li><li><a href="#refs">References</a></li>
+  </ol>
+
+  <h2 id="s1">1. Purpose and what differs from the US</h2>
+  <p>The cash leg of the capital markets line needs the expected average return on euro cash over five and ten years, derived from house forecasts rather than copied from market forwards. The case for that, and for the error-correction structure, is set out in the US paper and is not repeated here. Money-market futures embed premia that are hard to separate from expectations in the euro area as in the US <span class="cite">(Ferrero and Nobili 2009)</span>, and a forecast-driven path leaves room for a house view.</p>
+  <p>Four things differ. The policy instrument is the deposit facility rate (DFR). It is a single rate rather than a target range, and the ECB has steered the stance through it since its March 2024 operational-framework decision <span class="cite">(European Central Bank 2024)</span>. The reaction-function evidence comes from a shorter history, mostly 1999–2014, and points to a forward-looking rule with no momentum. The house activity input is German real GDP, not euro-area GDP, because that is how the house models are set up. And the starting point sits inside an energy shock. Headline HICP was 3.8% in September 2026 with energy up 18.9% and core at 2.5%. The ECB raised the DFR by 25bp in June and September to 2.50% and held on 29 October <span class="cite">(European Central Bank 2026b)</span>.</p>
+</div>
+
+<h2 id="lab" class="col">Interactive lab</h2>
+<div class="col"><p class="ui note" style="font-size:13.5px">Choose a scenario or enter your own paths. Growth (German real GDP) and inflation (euro-area HICP) are calendar-year averages of year-on-year rates; 2026 already includes three observed quarters, the third quarter of German GDP estimated. In <b>HICP builder</b> mode, headline and core to end-2028 are built month by month from assumptions on core momentum, energy and food, so the energy base effects are explicit. Parameter sliders show the evidence range as a shaded band.</p></div>
+<section class="lab wide" aria-label="Interactive lab">
+  <div class="ctl">
+    <h4>Scenario</h4>
+    <select id="scn" aria-label="Scenario"></select>
+    <p class="note" id="scnDesc" style="margin:0"></p>
+    <h4>Inflation inputs</h4>
+    <div class="seg" role="group" aria-label="Inflation input mode"><button id="mBuild" type="button">HICP builder</button><button id="mAnn" type="button">Annual averages</button></div>
+    <div id="builder" class="grid3 ui"></div>
+    <h4>Growth and inflation (annual averages, %)</h4><p class="note" style="margin:0" id="roNote"></p>
+    <div class="tablewrap"><table class="inputs" id="inputs"></table></div>
+    <h4>Anchor</h4>
+    <div class="grid3">
+      <div><label for="a_anchor">Long-run DFR</label><input type="number" id="a_anchor" step="0.05"></div>
+      <div><label for="a_pi">Long-run HICP <i>π</i>*</label><input type="number" id="a_pi" step="0.05"></div>
+      <div><label for="a_g">German potential <i>g</i>*</label><input type="number" id="a_g" step="0.05"></div>
+    </div>
+    <h4>Rule</h4>
+    <div id="sliders" class="ctl"></div>
+    <div class="row"><button id="steps" type="button" class="on">25bp steps on</button><button id="showAll" type="button">Compare scenarios</button><button id="reset" type="button">Reset scenario</button></div>
+  </div>
+  <div class="ctl" style="min-width:0">
+    <div class="kpis" id="kpis"></div>
+    <figure style="margin:6px 0 0">
+      <div class="chart"><div id="fig1" class="svghost" role="img" aria-label="Deposit facility rate path"></div></div>
+      <figcaption><b>Figure 1. Deposit facility rate path.</b> Quarterly. Solid: implemented in 25bp steps throughout (only the December meeting remains in 2026Q4, two meetings a quarter after). Dashed: the rule's intended path. Purple dots: the three-month Euribor assumption in the September 2026 ECB staff projections, annual averages for 2027 and 2028 (cut-off 19 August), shown for reference only.</figcaption>
+      <div class="row" id="diag" style="margin-top:6px"></div>
+    </figure>
+    <figure style="margin:8px 0 0">
+      <div class="legend"><span style="--sw:var(--c-mom)">Momentum</span><span style="--sw:var(--c-pull)">Pull to anchor</span><span style="--sw:var(--c-inf)">Inflation gap</span><span style="--sw:var(--c-gro)">Growth gap</span><span style="--sw:var(--c-stn)">Starting stance</span></div>
+      <div class="chart small"><div id="fig2" class="svghost" role="img" aria-label="Contributions to quarterly change"></div></div>
+      <figcaption><b>Figure 2. What moves the rate.</b> Contribution of each term to the intended quarterly change, percentage points; line is the total. Momentum is zero at the central calibration.</figcaption>
+    </figure>
+    <figure style="margin:8px 0 0">
+      <div class="chart small"><div id="fig3" class="svghost" role="img" aria-label="Inputs"></div></div>
+      <figcaption><b>Figure 3. Inputs, quarterly.</b> Year-on-year rates; 2026Q1–Q3 observed (German 2026Q3 estimated). The rule reads inflation <i>k</i><sub>π</sub> quarters ahead and growth <i>k</i><sub>g</sub> quarters ahead of each date shown.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<div class="col">
+  <h2 id="s2">2. What the literature supports</h2>
+
+  <h3>2.1 The ECB's reaction function</h3>
+  <p>Before the euro existed, Gerlach and Schnabel (2000) found that the GDP-weighted average of three-month rates in the future member states over 1990–98 followed a Taylor rule closely, with an inflation response of 1.58 and an output-gap response of 0.45; they could not reject Taylor's 1.5 and 0.5. Estimates on ECB data since 1999 share one finding: the ECB is described well by a rule on <i>expected</i> inflation and poorly by one on current inflation. Gerdesmeier and Roffia (2004), using real-time data for 1999–2003, estimate an inflation response of 0.39 on current data, which fails the Taylor principle, against 1.31 on SPF forecasts twelve months ahead and 2.91 on forecasts 24 months ahead. Sauer and Sturm (2007) reach the same conclusion: contemporaneous rules suggest an accommodating ECB, while forward-looking rules and rules on survey expectations imply a stabilising one. Gorter, Jacobs and de Haan (2008) find realised inflation insignificant but Consensus Economics expectations significant. In a later update on the same data they estimate a long-run response of 1.39–1.43 to expected inflation and 0.83–1.52 to expected growth <span class="cite">(Gorter, Jacobs and de Haan 2009)</span>.</p>
+  <p>The most careful estimate uses the Eurosystem and ECB staff projections available at each meeting. Paloviita et al. (2021), for 1999Q4–2014Q2, find quarterly smoothing of 0.84, a long-run response of 4.45 to inflation projected four quarters ahead and 1.48 to projected growth. They also find a de facto inflation aim of 1.77% (95% interval 1.62–1.91) and a response to past deviations from target. Gerlach and Lewis (2014), on monthly data to 2011 with SPF expectations, find a long-run inflation response of 4.55. Model-based estimates are lower. The posterior mode of the ECB's New Area-Wide Model II gives 2.75–2.93 <span class="cite">(Coenen et al. 2018; Darracq Pariès, Kornprobst and Priftis 2026)</span>. Smets and Wouters (2003), in their estimated euro-area DSGE model, give 1.68. These estimates span 1.2 to 4.6. The single-equation real-time estimates sit at the top of that range, and their samples end before the 2021–23 inflation surge, for which no estimated DFR rule is yet available.</p>
+  <p>The ECB's stated strategy bears on the calibration. Since 2021 the target has been 2% over the medium term, and the 2025 assessment confirmed it as symmetric. It "recognises the importance of appropriately forceful or persistent monetary policy action in response to large, sustained deviations of inflation from the target in either direction", with the response depending on "the origin, magnitude and persistence of the deviation" <span class="cite">(European Central Bank 2025a)</span>. A de facto aim below 2% (Paloviita et al. 2021) belongs to the pre-2021 regime, so we set <i>π</i>* at 2.0%.</p>
+
+  <h3>2.2 Growth rather than the output gap</h3>
+  <p>The euro-area evidence favours growth over the level of the output gap more clearly than the US evidence does. Gerlach (2007), studying ECB decisions over 1999–2006, finds expected real GDP growth and economic sentiment highly significant and the output gap insignificant. In NAWM II the response to the change in the output gap is 0.09–0.10 a quarter, three times the long-run response to its level, which on impact is close to zero <span class="cite">(Coenen et al. 2018)</span>. In Smets and Wouters (2003) the change in the gap carries 0.16 a quarter, against a long-run response of 0.10 to the level. Orphanides and Wieland (2013) go further. A first-difference rule, raising the rate by half the gap between the SPF inflation forecast and the aim and by half the gap between forecast growth and the Commission's real-time potential growth, is “similar to the evolution of actual ECB policy”, with no output-gap level and no neutral rate. Hartmann and Smets (2018) estimate that rule on staff projections and find coefficients "somewhat smaller than, but not significantly different from 0.5". Paloviita et al. (2021) also use projected growth, citing the real-time mismeasurement of the output gap and the way the ECB communicates.</p>
+  <p>We therefore keep the US design, with growth minus potential in place of the gap, and the anchor supplying the level information a pure difference rule lacks. The long-run growth response is about 1.4: Paloviita et al. (2021) estimate 1.25–1.69, and NAWM II's change-in-gap coefficient divided by its adjustment speed gives about 1.4.</p>
+
+  <h3>2.3 Inertia without momentum</h3>
+  <p>Quarterly smoothing in the real-time single-equation estimates is 0.77–0.84 <span class="cite">(Paloviita et al. 2021)</span>, and the monthly 0.93–0.94 of Gerlach and Lewis (2014) is 0.80–0.83 a quarter. In our notation that is an adjustment speed of 0.16–0.23. NAWM II's 0.92–0.93 and Smets and Wouters' 0.96 imply slower adjustment, 0.04–0.08, though DSGE smoothing coefficients also absorb the persistence of shocks the model does not otherwise capture. The real-time estimates are the more relevant guide to how quickly the rate moves towards its target in practice, so we take 0.17 with a range of 0.07–0.25. Gerdesmeier and Roffia's (2004) much faster adjustment comes from a four-year sample and is not used.</p>
+  <p>Unlike the Fed, the ECB shows no momentum in its rate changes. Gerlach and Lewis (2014) find the lagged change negative and insignificant (−0.14, <i>p</i> = 0.13), and in Gerlach's (2007) ordered-probit model of decisions the lagged change enters negatively. We set momentum to zero. The upper end of its range, 0.25, comes from US estimates and has no euro-area support. With no momentum, convergence has no overshoot, and a gap halves in about <span class="live" id="hl">4</span> quarters (Figure 4).</p>
+
+  <h3>2.4 Which inflation, and at what horizon</h3>
+  <p>Every ECB estimate that finds a stabilising policy uses forecasts, and the horizons cluster at about a year: four quarters in Paloviita et al. (2021), eleven months in Hartmann and Smets (2018), twelve months in Gerlach and Lewis (2014) and Orphanides and Wieland (2013), and three quarters in Bletzinger and Wieland (2017). Growth horizons are shorter, one to three quarters. The rule therefore responds to the house forecast of headline HICP four quarters ahead and of growth two quarters ahead. Both leads can be changed in the lab. This matches the ECB's medium-term orientation, which gives it "flexibility to look through temporary shocks to inflation that may dissipate on their own accord", provided expectations stay anchored. The 2025 assessment adds that "pre-emptive action to avert de-anchoring may be necessary because it is very costly to counteract once it has occurred" <span class="cite">(European Central Bank 2025b)</span>.</p>
+  <p>The forecast lead looks through energy only if the house forecast does. The estimated rules respond to projected <i>headline</i> HICP, so when oil is expected to fall and the 2026 spike drops out of the twelve-month comparison, projected headline falls below target and the rule eases. The 2021–23 episode shows the risk. Tatar and Wieland (2025) find that rules on realised core or domestic inflation would have called for tightening in 2021, well before the ECB began. The ECB's own review concludes that "any initial delay in policy normalisation was arguably compensated by a more forceful normalisation subsequently" <span class="cite">(Workstream on Monetary Policy Tools, Strategy and Communication 2025)</span>. The September 2026 staff projections had headline at 2.5% and core at 2.6% for 2027, and the ECB raised rates at the same meeting. It has said that "the longer energy prices stay high, the more likely they are to drive up broader inflation through indirect and second-round effects" <span class="cite">(European Central Bank 2026c)</span>. That behaviour sits closer to a response to projected core than to projected headline. Our default follows the estimated rules (headline, <i>θ</i> = 0), and the core-reactive alternative (<i>θ</i> = 1) is a scenario. In the current episode it is the largest judgement in the framework (Section 6).</p>
+
+  <h3>2.5 Anchoring and mean reversion</h3>
+  <p>The long-run DFR is a house input, here <span class="live" id="anc1">2.00</span>%, with long-run HICP inflation of <span class="live" id="anc2">2.0</span>%, so a long-run real rate of zero. That sits in the middle of the ECB staff range for nominal r* of 1¾–2¼%. The staff describe these ranges as "merely indicative", and including Holston–Laubach–Williams-type models widens the range to 1¾–3% <span class="cite">(Brand, Lisack and Mazelis 2025)</span>. The US paper's argument for setting rather than estimating the anchor applies with more force here, given how far euro-area estimates have moved since the 2018 staff review, when most estimates of the real rate were negative <span class="cite">(Brand, Bielecki and Penalver 2018)</span>. With all gaps closed, a deviation from the anchor decays as <i>x</i><sub><i>t</i></sub> = (1 + <i>ρ</i> − <i>λ</i>)<i>x</i><sub><i>t</i>−1</sub> − <i>ρ</i><i>x</i><sub><i>t</i>−2</sub>. The consistency conditions are the same as for the US. Long-run inflation in the forecasts must equal <i>π</i>*, long-run growth must equal <i>g</i>*, and 1 + <i>φ</i><sub>π</sub> must exceed one.</p>
+  <figure>
+    <div class="chart small"><div id="fig4" class="svghost" role="img" aria-label="Convergence dynamics"></div></div>
+    <figcaption><b>Figure 4. Mean reversion under the current parameters.</b> Policy-rate deviation from its starting point, pp, continuous (no steps). Blue: rate starts 1pp above the anchor with all gaps closed. Green: a 1pp inflation gap lasting four quarters. Ochre: a 1pp growth-above-potential gap lasting four quarters.</figcaption>
+  </figure>
+
+  <h3>2.6 Implementation: steps, meetings and the lower bound</h3>
+  <p>The DFR moves in multiples of 25bp at eight monetary-policy meetings a year. Only 17 December remains in 2026, and the 2027 calendar has two meetings in each quarter. The rule runs on a continuous intended rate, and the implemented rate moves on the 25bp grid, at most 25bp per meeting. Because the 2.0% anchor is itself a grid point, the US artefact of a path parking either side of a range boundary does not arise. The 25bp cap is a simplification: in 2022 the ECB moved by 50bp and 75bp. Steps apply over the whole horizon; because the anchor is a grid point, the stepped path converges to it exactly. The lower bound is −0.50%, the lowest DFR to date (from September 2019), which is also the value ECB staff use in strategy simulations <span class="cite">(Mazelis, Motto and Ristiniemi 2023)</span>. As in the US version, the intended rate may fall below it, so the rule lifts off later after a lower-bound episode.</p>
+
+  <h3>2.7 German growth as the activity input</h3>
+  <p>The ECB responds to euro-area conditions, so German growth relative to German potential stands in for the euro-area growth gap only if the two cycles move together. Measuring the gap against potential removes the structural difference: German potential growth is lower than the euro area's, estimated by the Bundesbank at 0.3–0.4% a year <span class="cite">(Deutsche Bundesbank 2026)</span> and by the joint economic forecast at about 0.2%, falling <span class="cite">(Projektgruppe Gemeinschaftsdiagnose 2026a)</span>. Idiosyncratic German shocks are not removed. In 2025 German GDP grew 0.2% against 1.4% for the euro area, and German fiscal expansion is expected to lift German growth relative to the euro area in 2027–28. The house long-run growth rate, 1.0% a year, serves as potential in the rule and is well above the official German estimates. If true potential is nearer 0.4%, the house path of 1.1–1.2% in 2027–28 implies a larger positive gap, and the rule would hold rates higher than shown. We recommend replacing the input with euro-area GDP once the house models produce it. In the meantime, scenarios should be read as German-cycle scenarios.</p>
+
+  <h2 id="s3">3. The rule and its calibration</h2>
+  <p>Quarterly, with all rates in annual per cent and inflation and growth as four-quarter rates; superscripts denote the forecast horizon:</p>
+  <div class="eq">Δ<i>i</i><sub><i>t</i></sub> = <i>ρ</i>&#8202;Δ<i>i</i><sub><i>t</i>−1</sub> + <i>λ</i>&#8202;[&#8202;(<i>ī</i> − <i>i</i><sub><i>t</i>−1</sub>) + (1 + <i>φ</i><sub>π</sub>)(<i>π</i><sub><i>t</i>+<i>k</i>π</sub> − <i>π</i>*) + <i>φ</i><sub>g</sub>(<i>g</i><sub><i>t</i>+<i>k</i>g</sub> − <i>g</i>*) + <i>s</i><sub>0</sub>2<sup>−<i>t</i>/<i>h</i></sup>&#8202;]<span class="n">(1)</span></div>
+  <div class="eq"><i>π</i> = core + (1 − <i>θ</i>)(headline − core),&#8195; <i>i</i><sup>impl</sup><sub><i>t</i></sub> = grid(<i>i</i><sub><i>t</i></sub>) ≥ ELB<span class="n">(2)</span></div>
+  <p>The mapping from published estimates is the one used for the US: one-lag smoothing <i>s</i> gives <i>λ</i> = 1 − <i>s</i>, and the long-run responses are 1 + <i>φ</i><sub>π</sub> and <i>φ</i><sub>g</sub>. For a first-difference rule, the quarterly impact of a 1pp inflation gap is <i>λ</i>(1 + <i>φ</i><sub>π</sub>). At the central calibration that is 0.51, close to the 0.5 of Orphanides and Wieland (2013) and the estimates of Hartmann and Smets (2018). The impact of a growth gap is 0.24, within the 0.24–0.35 implied by Paloviita et al. (2021) and below the first-difference rule's 0.5.</p>
+  <div class="tablewrap" style="margin:8px 0 6px">
+  <table class="text">
+    <tr><th>Parameter</th><th>Meaning</th><th>Central</th><th>Range</th><th>Basis</th></tr>
+    <tr><td><i>λ</i></td><td>Share of gap to target closed per quarter</td><td class="num">0.17</td><td class="num">0.07–0.25</td><td>Real-time single-equation 0.16–0.23 (Paloviita et al.; Gerlach–Lewis); NAWM II 0.065–0.08, Smets–Wouters 0.04</td></tr>
+    <tr><td><i>ρ</i></td><td>Momentum in changes</td><td class="num">0</td><td class="num">0–0.25</td><td>Lagged change negative or insignificant (Gerlach–Lewis; Gerlach). Upper end from US estimates only</td></tr>
+    <tr><td>1 + <i>φ</i><sub>π</sub></td><td>Long-run response to projected inflation</td><td class="num">3.0</td><td class="num">1.4–4.5</td><td>NAWM II 2.75–2.93; Gerdesmeier–Roffia (SPF, 24 months) 2.91; first-difference impact 0.5 ÷ <i>λ</i> ≈ 2.9; Paloviita et al. 1.23–4.45; Gerlach–Lewis 4.55; Gorter et al. 1.39–1.43</td></tr>
+    <tr><td><i>φ</i><sub>g</sub></td><td>Long-run response to growth minus potential</td><td class="num">1.4</td><td class="num">0.8–1.7</td><td>Paloviita et al. 1.25–1.69; NAWM II change in gap ≈ 1.25–1.4; Gorter et al. 0.83–1.52</td></tr>
+    <tr><td><i>k</i><sub>π</sub>, <i>k</i><sub>g</sub></td><td>Forecast horizons, quarters</td><td class="num">4, 2</td><td class="num">2–6, 1–3</td><td>Inflation 3–4 quarters ahead, growth 1–3 quarters ahead in all forecast-based estimates</td></tr>
+    <tr><td><i>θ</i></td><td>Look-through of headline minus core</td><td class="num">0</td><td class="num">0–1</td><td>Estimated rules use headline HICP projections; core-reactive is a scenario (2.4)</td></tr>
+    <tr><td><i>ī</i>, <i>π</i>*, <i>g</i>*</td><td>Anchor, long-run inflation, potential growth</td><td class="num">2.0, 2.0, 1.0</td><td class="num">inputs</td><td>House assumptions; ECB staff nominal r* 1¾–2¼%; Bundesbank German potential 0.3–0.4%</td></tr>
+  </table></div>
+  <p class="note">Detailed evidence by study, with specifications, samples and the version of each paper used, is in Table A1 at the end.</p>
+
+  <h2 id="s4">4. Inputs and conventions</h2>
+  <p><b>German growth in 2026.</b> Price- and calendar-adjusted German GDP was 0.7% and 1.0% above a year earlier in the first two quarters of 2026. If the third quarter stagnated, as the Bundesbank expects, it was about 1.0% up on a year earlier. A 1.0% annual average then needs the fourth quarter to be 1.3% above a year earlier, a quarterly rise of about 0.6%. That is a strong rebound but not implausible, and it is far closer to the data than the 0.3% of the previous round. Forecasts published in the autumn put 2026 at 1.3% <span class="cite">(Projektgruppe Gemeinschaftsdiagnose 2026b)</span>.</p>
+  <p><b>The 2026 inflation figure.</b> Euro-area HICP averaged 2.8% over January–September 2026 and was 3.8% in September. A 2.7% average for 2026 then needs the fourth quarter to average about 2.4%. That would take a fall in energy prices of more than 10% within the quarter, while Brent rose about 11% in October to about $115. German HICP, by contrast, averaged 2.3%, 2.7% and 3.0% in the first three quarters, so 2.7% for 2026 implies a fourth quarter of about 2.8%, consistent with the data. The figure therefore looks like a German inflation forecast, matching the German GDP input. Run against euro-area history, the annual-average conversion produces a sharp dip in the fourth quarter followed by a rebound in 2027. With the rule reading inflation four quarters ahead, that rebound triggers a December hike that is an artefact of the conversion. The second scenario reads the figure as German HICP. In that case the rule reads German inflation as a proxy for euro-area inflation, which has recently run 0.3–0.5pp below it. The monthly euro-area HICP builder (third scenario) gives the data-consistent euro-area path: with energy prices up about 3% in October and then falling about 7% a year, roughly the futures curve, euro-area HICP averages about 3.1% in 2026 and 2.5% in 2027 and dips to about 1.5% at end-2027 as the March–April 2026 energy spike drops out. The September ECB staff projections, which assumed Brent at $89.5 in 2026 and $78 in 2027, had 3.0% and 2.5% <span class="cite">(European Central Bank 2026a)</span>.</p>
+  <p><b>Potential and consistency.</b> Long-run German growth of 1.0% is used as potential, and long-run HICP equals the 2% target, so the path settles at the anchor. Both house inputs are internally consistent. Whether 1.0% is the right potential is the question raised in 2.7.</p>
+
+  <h2 id="s5">5. Results</h2>
+  <p id="resText">–</p>
+  <div class="tablewrap"><table id="scnTable"></table></div>
+  <p class="note" style="margin-top:6px">All scenarios run with the current parameters and anchor. Year-end values are the deposit facility rate where the path is stepped.</p>
+  <p>Three results stand out across the scenarios. First, the house forecasts imply little further tightening. Read as German inflation, the deposit rate holds at 2.50% and eases to 2.25% by end-2027. Read against euro-area history, the conversion artefact adds a December hike that is reversed in 2027. Second, the data-consistent euro-area HICP path, read four quarters ahead, takes the rule below target through 2027, so it eases to 2.25% by end-2026 and settles near 2.0%. Third, a rule that responds to projected core inflation, or one facing oil that stays near $115, raises the deposit rate to 3.00–3.25% in 2027. That is close to the roughly three further hikes priced in money markets at the end of October. As in the previous round, the gap between the house path and market pricing is mostly a disagreement about oil and about how the ECB treats energy, not about growth.</p>
+
+  <h2 id="s6">6. Sensitivity</h2>
+  <p>Table 2 moves each parameter to the ends of its evidence range for the selected scenario. As in the US, the adjustment speed changes timing but moves ten-year averages by a few basis points. The anchor moves them almost one for one. The inflation response matters more here than in the US because its range is wide (1.4–4.5) and because the 2027 base effects create a large projected inflation gap. In the current episode the inflation measure, headline or core, and its horizon are the decisive judgements.</p>
+  <div class="tablewrap"><table id="sensTable"></table></div>
+  <p class="note" style="margin-top:6px">Table 2. Selected scenario, one parameter changed at a time; all others at current settings.</p>
+
+  <h2 id="s7">7. Limitations and next steps</h2>
+  <p>The rule is calibrated, not estimated, and the evidence it rests on ends before the 2021–23 surge and the 2024–25 easing. The first check is a back-test on SPF or staff projections over 1999–2026, recording where the rule misses: the 2008 and 2011 hikes, the negative-rate period and the late start in 2022 are the obvious candidates. The ECB's balance-sheet policies and the fragmentation tools that accompanied the 2022 tightening are outside the rule; persistent deviations of that kind belong in scenarios. The activity input should move to euro-area GDP, and the German potential-growth assumption should be reconciled with official estimates. Neither the anchor nor its determinants are modelled here.</p>
+</div>
+<div class="wide">
+  <h2>Appendix: Table A1. Evidence on the ECB's reaction function</h2>
+  <div class="tablewrap evid"><table class="text"><tr><th>Source</th><th>Specification and sample</th><th><i>λ</i></th><th><i>ρ</i></th><th>1 + <i>φ</i><sub>π</sub></th><th>Activity response</th><th>Note</th></tr>
+<tr><td>Gerlach and Schnabel (2000)</td><td>Pre-EMU: GDP-weighted three-month rate of EMU countries, quarterly, 1990–98; OLS levels / GMM with inflation four quarters ahead</td><td class=num>— / 0.82</td><td class=num>—</td><td class=num>1.58 / 1.84</td><td>Output gap 0.45 / 0.34</td><td>Cannot reject Taylor's 1.5 and 0.5. Lagged rate 0.18, insignificant. CEPR DP 2271 version</td></tr>
+<tr><td>Gerdesmeier and Roffia (2004)</td><td>Monthly EONIA, real-time data, GMM, 1999:01–2003:06; current data / SPF inflation 12 and 24 months ahead</td><td class=num>0.75 / 0.64 / 0.70</td><td class=num>—</td><td class=num>0.39 / 1.31 / 2.91</td><td>Output gap 2.05 / 1.95 / 2.02</td><td>Monthly smoothing 0.63–0.71 cubed for quarterly. Taylor principle fails on current data. Short sample. Bundesbank DP 37/2004</td></tr>
+<tr><td>Gerlach (2007)</td><td>Ordered probit on monthly repo-rate changes, February 1999–June 2006</td><td class=num>—</td><td class=num>negative</td><td class=num>insignificant</td><td>Expected GDP growth and sentiment significant; output gap insignificant</td><td>Probit coefficients do not map into this form</td></tr>
+<tr><td>Gorter, Jacobs and de Haan (2008, 2009)</td><td>Consensus Economics expected inflation and growth; three-month Euribor; partial adjustment; 1997–2006 / 1997–July 2009</td><td class=num>—</td><td class=num>—</td><td class=num>1.39 / 1.43</td><td>Expected growth less 2.25%: 1.52 / 0.83</td><td>Smoothing 0.86, frequency not stated. Realised inflation insignificant. Coefficients from the 2009 ESB article</td></tr>
+<tr><td>Orphanides and Wieland (2013)</td><td>Calibrated first-difference rule; quarterly MRO changes; SPF inflation and growth one year ahead, growth less Commission potential</td><td class=num>→ 0</td><td class=num>0</td><td class=num>impact 0.5</td><td>Growth gap impact 0.5</td><td>Not estimated; 'similar to the evolution of actual ECB policy'</td></tr>
+<tr><td>Hartmann and Smets (2018)</td><td>First-difference rule on Eurosystem/ECB staff projections: inflation 11 months, growth three quarters ahead; MRO, DFR after October 2008</td><td class=num>→ 0</td><td class=num>0</td><td class=num>impact &lt;0.5</td><td>Growth impact &lt;0.5</td><td>'Somewhat smaller than, but not significantly different from 0.5'; implicit aim 1.81%. BPEA conference draft</td></tr>
+<tr><td>Paloviita et al. (2021)</td><td>Quarterly EONIA, real-time staff projections, GMM, 1999Q4–2014Q2; linear / symmetric past-gap / asymmetric past-gap</td><td class=num>0.16 / 0.23 / 0.21</td><td class=num>—</td><td class=num>4.45 / 3.61 / 1.23</td><td>Projected growth 1.48 / 1.25 / 1.69</td><td>Inflation four quarters ahead, growth one quarter ahead. De facto target 1.77% (1.62–1.91)</td></tr>
+<tr><td>Gerlach and Lewis (2014)</td><td>Monthly EONIA, SPF 12 months ahead, smooth-transition, January 1999–August 2011; normal regime</td><td class=num>0.17–0.20</td><td class=num>insignificant</td><td class=num>4.55</td><td>Growth: reported long run not verified</td><td>Monthly smoothing 0.93–0.94; lagged change −0.14 (p = 0.13)</td></tr>
+<tr><td>Smets and Wouters (2003)</td><td>Euro-area DSGE, posterior mode; responds to lagged inflation and the output gap</td><td class=num>0.04</td><td class=num>—</td><td class=num>1.68</td><td>Gap 0.10; change in gap 0.16 a quarter</td><td>Very high smoothing (0.961); change terms enter outside the smoothing</td></tr>
+<tr><td>Coenen et al. (2018)</td><td>NAWM II, posterior mode (version 1.2, as reported in the 2022 technical note)</td><td class=num>0.08</td><td class=num>—</td><td class=num>2.75</td><td>Gap 0.03; change in gap 0.10 a quarter (≈1.25 long-run*)</td><td>No output-growth term; the change in the gap plays that role</td></tr>
+<tr><td>Darracq Pariès, Kornprobst and Priftis (2026)</td><td>NAWM II, Bayesian posterior mode, 1985Q1–2019Q4</td><td class=num>0.065</td><td class=num>—</td><td class=num>2.93</td><td>Gap 0.03; change in gap 0.092 a quarter (≈1.4 long-run*)</td><td>Change-in-gap term enters outside the smoothing. Table 1 of ECB WP 2935</td></tr>
+<tr class="chosen"><td>This paper</td><td>Error-correction, quarterly; projected headline HICP four quarters ahead, German growth two quarters ahead</td><td class=num>0.17</td><td class=num>0</td><td class=num>3.0</td><td>Growth minus potential 1.4</td><td>Ranges in Section 3</td></tr></table>
+<p class="note" style="margin-top:6px"><i>λ</i> = 1 − quarterly smoothing; monthly coefficients are cubed. *Our mapping: impact coefficient divided by <i>λ</i>. Long-run inflation responses are 1 + <i>φ</i><sub>π</sub> in our notation; for first-difference rules the impact coefficient <i>λ</i>(1 + <i>φ</i><sub>π</sub>) is shown. Samples, horizons and policy rates differ. Where a published table was not accessible, figures are from the version named in the note; coefficients we could not read are left blank rather than inferred.</p></div>
+</div>
+<div class="col">
+  <h2 id="refs">References</h2>
+  <div class="refs"><p>Bletzinger, Tilman, and Volker Wieland. 2017. "Lower for Longer: The Case of the ECB." <i>Economics Letters</i> 159: 123–27.</p>
+<p>Brand, Claus, Marcin Bielecki, and Adrian Penalver, eds. 2018. "The Natural Rate of Interest: Estimates, Drivers, and Challenges to Monetary Policy." ECB Occasional Paper 217. Frankfurt am Main: European Central Bank.</p>
+<p>Brand, Claus, Noëmie Lisack, and Falk Mazelis. 2025. "Natural Rate Estimates for the Euro Area." <i>ECB Economic Bulletin</i>, Issue 1/2025, Box 8.</p>
+<p>Coenen, Günter, Peter Karadi, Sebastian Schmidt, and Anders Warne. 2018. "The New Area-Wide Model II: An Extended Version of the ECB's Micro-Founded Model for Forecasting and Policy Analysis with a Financial Sector." ECB Working Paper 2200. Posterior modes from the 2022 technical annex on version 1.2.3.</p>
+<p>Darracq Pariès, Matthieu, Antoine Kornprobst, and Romanos Priftis. 2026. "Monetary Policy Strategies to Navigate Post-Pandemic Inflation: An Assessment Using the ECB's New Area-Wide Model." <i>International Journal of Central Banking</i> 22 (4). Earlier version: ECB Working Paper 2935 (2024).</p>
+<p>Deutsche Bundesbank. 2026. "Forecast for Germany: Energy Price Shock Fuels Inflation and Slows the Economic Recovery." <i>Monthly Report</i>, June 2026.</p>
+<p>European Central Bank. 2024. "ECB Announces Changes to the Operational Framework for Implementing Monetary Policy." Press release, 13 March 2024.</p>
+<p>European Central Bank. 2025a. "The ECB's Monetary Policy Strategy Statement." 30 June 2025.</p>
+<p>European Central Bank. 2025b. "An Overview of the ECB's Monetary Policy Strategy – 2025." 30 June 2025.</p>
+<p>European Central Bank. 2026a. "ECB Staff Macroeconomic Projections for the Euro Area, September 2026." Frankfurt am Main: European Central Bank.</p>
+<p>European Central Bank. 2026b. "Monetary Policy Decisions." Press release, 29 October 2026.</p>
+<p>European Central Bank. 2026c. "Monetary Policy Statement." Press conference, 10 September 2026.</p>
+<p>Ferrero, Giuseppe, and Andrea Nobili. 2009. "Futures Contract Rates as Monetary Policy Forecasts." <i>International Journal of Central Banking</i> 5 (2): 109–45.</p>
+<p>Gerdesmeier, Dieter, and Barbara Roffia. 2004. "Taylor Rules for the Euro Area: The Issue of Real-Time Data." Deutsche Bundesbank Discussion Paper, Series 1, 37/2004. Frankfurt am Main.</p>
+<p>Gerlach, Stefan. 2007. "Interest Rate Setting by the ECB, 1999–2006: Words and Deeds." <i>International Journal of Central Banking</i> 3 (3): 1–45.</p>
+<p>Gerlach, Stefan, and John Lewis. 2014. "ECB Reaction Functions and the Crisis of 2008." <i>International Journal of Central Banking</i> 10 (1): 137–57.</p>
+<p>Gerlach, Stefan, and Gert Schnabel. 2000. "The Taylor Rule and Interest Rates in the EMU Area." <i>Economics Letters</i> 67 (2): 165–71. Coefficients from CEPR Discussion Paper 2271.</p>
+<p>Gorter, Janko, Jan Jacobs, and Jakob de Haan. 2008. "Taylor Rules for the ECB Using Expectations Data." <i>Scandinavian Journal of Economics</i> 110 (3): 473–88. https://doi.org/10.1111/j.1467-9442.2008.00547.x.</p>
+<p>Gorter, Janko, Jan Jacobs, and Jakob de Haan. 2009. "De Europese rente volgens Taylorregelmodellen." <i>Economisch Statistische Berichten</i> 94 (4574): 749–50.</p>
+<p>Hartmann, Philipp, and Frank Smets. 2018. "The First Twenty Years of the European Central Bank: Monetary Policy." <i>Brookings Papers on Economic Activity</i>, Fall 2018. Results from the conference draft.</p>
+<p>Mazelis, Falk, Roberto Motto, and Annukka Ristiniemi. 2023. "Monetary Policy Strategies for the Euro Area." ECB Working Paper 2797.</p>
+<p>Orphanides, Athanasios, and Volker Wieland. 2013. "Complexity and Monetary Policy." <i>International Journal of Central Banking</i> 9 (S1): 167–203.</p>
+<p>Paloviita, Maritta, Markus Haavio, Pirkka Jalasjoki, and Juha Kilponen. 2021. "What Does 'Below, but Close to, 2 Percent' Mean? Assessing the ECB's Reaction Function with Real-Time Data." <i>International Journal of Central Banking</i> 17 (2): 125–69.</p>
+<p>Projektgruppe Gemeinschaftsdiagnose. 2026a. <i>Gemeinschaftsdiagnose Frühjahr 2026</i>. Kiel: Kiel Institute for the World Economy.</p>
+<p>Projektgruppe Gemeinschaftsdiagnose. 2026b. <i>Gemeinschaftsdiagnose Herbst 2026</i>. Press release, 24 September 2026.</p>
+<p>Sauer, Stephan, and Jan-Egbert Sturm. 2007. "Using Taylor Rules to Understand European Central Bank Monetary Policy." <i>German Economic Review</i> 8 (3): 375–98. https://doi.org/10.1111/j.1468-0475.2007.00413.x.</p>
+<p>Smets, Frank, and Raf Wouters. 2003. "An Estimated Dynamic Stochastic General Equilibrium Model of the Euro Area." <i>Journal of the European Economic Association</i> 1 (5): 1123–75.</p>
+<p>Tatar, Balint, and Volker Wieland. 2025. "Policy Rules and the Inflation Surge: The Case of the ECB." <i>Economics Letters</i> 252: 112338. https://doi.org/10.1016/j.econlet.2025.112338.</p>
+<p>Workstream on Monetary Policy Tools, Strategy and Communication. 2025. "Report on Monetary Policy Tools, Strategy and Communication." ECB Occasional Paper 372. Frankfurt am Main: European Central Bank.</p></div>
+</div>
+</article>
+
+<script>
+// JavaScript port of cashpath/engine.py. Keep the two in step; tests/parity.mjs compares them.
+(function (root) {
+  function qAdd(q, n) { // q like "2026Q3"
+    let y = parseInt(q.slice(0, 4), 10), k = parseInt(q.slice(5), 10) - 1 + n;
+    y += Math.floor(k / 4); k = ((k % 4) + 4) % 4;
+    return y + "Q" + (k + 1);
+  }
+  function qDiff(a, b) { // a - b in quarters
+    return (parseInt(a.slice(0, 4)) * 4 + parseInt(a.slice(5)) - 1) - (parseInt(b.slice(0, 4)) * 4 + parseInt(b.slice(5)) - 1);
+  }
+  function interp(x, xs, ys) {
+    if (x <= xs[0]) return ys[0];
+    for (let i = 1; i < xs.length; i++) if (x <= xs[i]) return ys[i - 1] + (ys[i] - ys[i - 1]) * (x - xs[i - 1]) / (xs[i] - xs[i - 1]);
+    return ys[ys.length - 1];
+  }
+  function gStarFor(gs, year) {
+    const ys = Object.keys(gs || {}).map(Number).sort((a, b) => a - b);
+    if (!ys.length) return 2.0;
+    const past = ys.filter(y => y <= year);
+    return gs[past.length ? past[past.length - 1] : ys[0]];
+  }
+  function solveLinear(M, v) { // Gaussian elimination with partial pivoting
+    const n = v.length, A = M.map((r, i) => r.concat([v[i]]));
+    for (let c = 0; c < n; c++) {
+      let piv = c; for (let r = c + 1; r < n; r++) if (Math.abs(A[r][c]) > Math.abs(A[piv][c])) piv = r;
+      [A[c], A[piv]] = [A[piv], A[c]];
+      for (let r = c + 1; r < n; r++) { const f = A[r][c] / A[c][c]; if (!f) continue; for (let k = c; k <= n; k++) A[r][k] -= f * A[c][k]; }
+    }
+    const x = new Array(n).fill(0);
+    for (let r = n - 1; r >= 0; r--) { let s = A[r][n]; for (let k = r + 1; k < n; k++) s -= A[r][k] * x[k]; x[r] = s / A[r][r]; }
+    return x;
+  }
+  function smoothAnnualAverage(n, prev2, groups, w1) {
+    w1 = w1 == null ? 1.0 : w1;
+    const rows = [], rhs = [], ext = [prev2[0], prev2[1]];
+    for (let j = 0; j < n; j++) { const r = new Array(n).fill(0); let c = 0;
+      [[0, 1], [1, -2], [2, 1]].forEach(([off, w]) => { const k = j - off; if (k >= 0) r[k] += w; else c -= w * ext[2 + k]; });
+      rows.push(r); rhs.push(c); }
+    for (let j = 0; j < n; j++) { const r = new Array(n).fill(0); let c = 0; r[j] += w1; if (j >= 1) r[j - 1] -= w1; else c += w1 * prev2[1]; rows.push(r); rhs.push(c); }
+    const m = groups.length, N = n + m, K = [], b = new Array(N).fill(0);
+    for (let i = 0; i < N; i++) K.push(new Array(N).fill(0));
+    for (let r = 0; r < rows.length; r++) { const row = rows[r];
+      for (let a = 0; a < n; a++) { if (!row[a]) continue; b[a] += 2 * row[a] * rhs[r]; for (let c = 0; c < n; c++) if (row[c]) K[a][c] += 2 * row[a] * row[c]; } }
+    groups.forEach(([idxs, total], g) => { idxs.forEach(i => { K[n + g][i] = 1; K[i][n + g] = 1; }); b[n + g] = total; });
+    return solveLinear(K, b).slice(0, n);
+  }
+  function buildInputs(sc, p, H) {
+    const qs = []; for (let j = 1; j <= H; j++) qs.push(qAdd(sc.start.quarter, j));
+    const out = { quarter: qs, g_star: qs.map(q => gStarFor(sc.g_star, +q.slice(0, 4))) };
+    const dec = Math.pow(0.5, 1 / p.gap_halflife_q);
+    const qNum = q => parseInt(q.slice(0, 4)) * 4 + parseInt(q.slice(5)) - 1;
+    for (const v of ["gdp", "core", "headline"]) {
+      if (sc.basis === "annual_average" && sc[v] && Object.keys(sc[v]).length) {
+        const H0 = (sc.history || {});
+        const hist = H0[v] || (v === "core" ? H0.headline : null) || {};
+        const sq = sc.start.quarter, lastObs = sc.start[v] != null ? sc.start[v] : (hist[sq] ?? p.pi_star);
+        const prevObs = hist[qAdd(sq, -1)] ?? lastObs;
+        const ann = {}; Object.keys(sc[v]).map(Number).sort((a, b) => a - b).forEach(y => ann[y] = sc[v][y]);
+        const ys = Object.keys(ann).map(Number), lastY = Math.max(...ys);
+        const tgtLast = v === "gdp" ? gStarFor(sc.g_star, lastY) : p.pi_star;
+        const endY = +qs[qs.length - 1].slice(0, 4);
+        for (let y = lastY + 1; y <= endY; y++) { const t = v === "gdp" ? gStarFor(sc.g_star, y) : p.pi_star; ann[y] = t + (ann[lastY] - tgtLast) * Math.pow(dec, 4 * (y - lastY)); }
+        const groups = [], fixed = (sc.quarterly || {})[v] || {};
+        qs.forEach((q, i) => { if (fixed[q] != null) groups.push([[i], fixed[q]]); });
+        Object.keys(ann).map(Number).sort((a, b) => a - b).forEach(y => {
+          const proj = qs.map((q, i) => +q.slice(0, 4) === y ? i : -1).filter(i => i >= 0);
+          if (!proj.length || proj.some(i => fixed[qs[i]] != null)) return;
+          const nObs = 4 - proj.length; let s = 0, have = 0;
+          for (let k = 1; k <= nObs; k++) { const val = hist[y + "Q" + k]; if (val != null && qNum(y + "Q" + k) <= qNum(sq)) { s += val; have++; } }
+          groups.push(nObs && have < nObs ? [proj, ann[y] * proj.length] : [proj, 4 * ann[y] - s]);
+        });
+        out[v] = smoothAnnualAverage(qs.length, [prevObs, lastObs], groups, 1.0);
+        continue;
+      }
+      const kx = [0], ky = [sc.start[v] != null ? sc.start[v] : (v === "headline" ? (sc.start.core ?? p.pi_star) : p.pi_star)];
+      const ann = sc[v] || {};
+      Object.keys(ann).map(Number).sort((a, b) => a - b).forEach(y => {
+        const k = qDiff(y + "Q4", sc.start.quarter); if (k > 0) { kx.push(k); ky.push(ann[y]); }
+      });
+      const last = kx[kx.length - 1];
+      out[v] = qs.map((q, i) => {
+        const j = i + 1;
+        if (j <= last) return interp(j, kx, ky);
+        const tgt = v === "gdp" ? gStarFor(sc.g_star, +q.slice(0, 4)) : p.pi_star;
+        const gap0 = ky[ky.length - 1] - tgt;
+        return tgt + gap0 * Math.pow(dec, j - last);
+      });
+    }
+    return out;
+  }
+  function snap(n, prev, p, cap) {
+    const step = p.step == null ? 0.25 : p.step, band = p.step_band == null ? 0.025 : p.step_band;
+    if (step <= 0) return Math.max(p.elb, n);
+    if (Math.abs(n - prev) <= step / 2 + band) return Math.max(p.elb, prev);
+    const base = p.grid_base == null ? p.elb : p.grid_base;
+    const k = Math.round((n - base) / step);
+    let tgt = Math.max(p.elb, base + k * step);
+    if (cap != null) tgt = Math.min(prev + cap, Math.max(prev - cap, tgt));
+    return tgt;
+  }
+  function simulate(sc, base, H) {
+    H = H || 41;
+    const p = Object.assign({}, base, sc.overrides || {});
+    const alpha = p.lam * (1 + p.phi_pi), beta = p.lam * p.phi_g;
+    const x = buildInputs(sc, p, H);
+    let iN = sc.start.rate, dPrev = sc.start.last_change || 0;
+    let iPrev = snap(sc.start.rate, sc.start.rate, Object.assign({}, base, sc.overrides || {}));
+    const rows = [];
+    const L = p.lead_q || 0;
+    for (let t = 0; t < H; t++) {
+      const f = Math.min(t + L, H - 1), fg = Math.min(t + (p.lead_g_q || 0), H - 1);
+      const piRule = x.core[f] + (1 - p.theta) * (x.headline[f] - x.core[f]);
+      const cm = p.rho * dPrev, cp = p.lam * (p.anchor_nominal - iN);
+      const ci = alpha * (piRule - p.pi_star), cg = beta * (x.gdp[fg] - x.g_star[fg]);
+      const cs = p.lam * (p.stance_gap0 || 0) * Math.pow(0.5, t / (p.stance_halflife_q || 6));
+      const d = cm + cp + ci + cg + cs;
+      iN += d;
+      const cap = (p.max_move_per_meeting ?? 0.25) * (t === 0 ? (p.meetings_first_q ?? 1) : (p.meetings_per_q ?? 2));
+      const iAct = t < (p.step_horizon_q == null ? 12 : p.step_horizon_q) ? snap(iN, iPrev, p, cap) : Math.max(p.elb, iN);
+      rows.push({ quarter: x.quarter[t], rate: iAct, notional: iN, change: d, move: iAct - iPrev,
+        c_momentum: cm, c_pull: cp, c_inflation: ci, c_growth: cg, c_stance: cs, pi_rule: piRule,
+        core: x.core[t], headline: x.headline[t], gdp: x.gdp[t], g_star: x.g_star[t] });
+      dPrev = d; iPrev = iAct;
+    }
+    return { rows, params: p };
+  }
+  function horizonAverage(rows, years) {
+    let prod = 1; for (let i = 0; i < 4 * years; i++) prod *= 1 + rows[i].rate / 400;
+    return (Math.pow(prod, 1 / years) - 1) * 100;
+  }
+  function diagnostics(p) {
+    const a1 = 1 + p.rho - p.lam, a2 = -p.rho, disc = a1 * a1 + 4 * a2;
+    const modulus = disc >= 0 ? Math.max(Math.abs((a1 + Math.sqrt(disc)) / 2), Math.abs((a1 - Math.sqrt(disc)) / 2)) : Math.sqrt(-a2);
+    let xp = 1, x = 1, k = 0, minx = 0;
+    for (k = 1; k < 200; k++) { const xn = a1 * x + a2 * xp; xp = x; x = xn; if (Math.abs(x) <= 0.5) break; }
+    // overshoot: run longer to find most negative deviation
+    xp = 1; x = 1; for (let j = 0; j < 80; j++) { const xn = a1 * x + a2 * xp; xp = x; x = xn; minx = Math.min(minx, x); }
+    return { modulus, halfLifeQ: k, oscillates: disc < 0, overshoot: -minx, stable: modulus < 1 };
+  }
+  // Monthly CPI builder: port of tools/cpi_monthly.py
+  const OBS_HEAD_MM = [0.1, 0.1, 0.3, 0.2, 0.3, 0.9, 0.6, 0.5, -0.4, 0.1, 0.4, 0.6];
+  const OBS_CORE_MM = [0.15, 0.15, 0.2, 0.3, 0.2, 0.2, 0.4, 0.2, 0.0, 0.2, 0.3, 0.3];
+  const OBS_HEAD_YY = [2.4, 2.4, 3.3, 3.8, 4.2, 3.5, 3.4, 3.4, 3.7];
+  const OBS_CORE_YY = [2.5, 2.5, 2.6, 2.8, 2.9, 2.6, 2.5, 2.4, 2.6];
+  const W = { core: 0.795, food: 0.135, energy: 0.07 };
+  function cpiBuild(a, data) {
+    const D = data || { head_mm: OBS_HEAD_MM, core_mm: OBS_CORE_MM, head_yy: OBS_HEAD_YY, core_yy: OBS_CORE_YY, weights: W };
+    const w = D.weights, nObs = D.head_yy.length, nProj = 36 - nObs, k27 = 23 - nObs, k28 = 35 - nObs;
+    const mm = x => (Math.pow(1 + x / 100, 1 / 12) - 1) * 100;
+    const pc = [], ph = [];
+    for (let k = 0; k < nProj; k++) {
+      const c = interp(k, [0, k27, k28], [a.core_q4_26, a.core_end27, a.core_end28]);
+      const e = k <= k27 ? a.energy27 : a.energy28;
+      const em = mm(e) + (k === 0 ? (a.energy_jump || 0) : 0);
+      pc.push(mm(c)); ph.push(w.core * mm(c) + w.food * mm(a.food) + w.energy * em);
+    }
+    const yy = (obs, proj) => { const all = obs.concat(proj), out = [];
+      for (let i = 12; i < all.length; i++) { let p = 1; for (let j = i - 11; j <= i; j++) p *= 1 + all[j] / 100; out.push((p - 1) * 100); } return out; };
+    const res = {};
+    [["headline", D.head_yy, D.head_mm, ph], ["core", D.core_yy, D.core_mm, pc]].forEach(([name, oyy, omm, proj]) => {
+      const m = oyy.concat(yy(omm, proj));               // Jan 2026 .. Dec 2028
+      const q = {}, ann = {}, months = [];
+      m.forEach((v, i) => { const y = 2026 + Math.floor(i / 12), qq = y + "Q" + (Math.floor((i % 12) / 3) + 1);
+        (q[qq] = q[qq] || []).push(v); (ann[y] = ann[y] || []).push(v); months.push({ m: y + "-" + String(i % 12 + 1).padStart(2, "0"), v }); });
+      const avg = arr => arr.reduce((s, x) => s + x, 0) / arr.length;
+      res[name] = { monthly: months, quarterly: Object.fromEntries(Object.entries(q).map(([k, v]) => [k, +avg(v).toFixed(2)])),
+        annual: Object.fromEntries(Object.entries(ann).map(([k, v]) => [k, avg(v)])) };
+    });
+    return res;
+  }
+  root.CashPath = { simulate, horizonAverage, diagnostics, qAdd, cpiBuild };
+})(typeof window !== "undefined" ? window : globalThis);
+
+</script>
+<script>
+const CFG = {"country": "EA", "inflation_basis": "HICP (ECB responds to projected headline; core available through the builder)", "params": {"anchor_nominal": 2.0, "pi_star": 2.0, "lam": 0.17, "rho": 0.0, "phi_pi": 2.0, "phi_g": 1.4, "theta": 0.0, "lead_q": 4, "lead_g_q": 2, "elb": -0.5, "gap_halflife_q": 4, "stance_gap0": 0.0, "stance_halflife_q": 6, "step": 0.25, "step_band": 0.025, "max_move_per_meeting": 0.25, "meetings_first_q": 1, "meetings_per_q": 2, "step_horizon_q": 41}, "start": {"quarter": "2026Q3", "rate": 2.5, "last_change": 0.25, "gdp": 1.0, "core": 2.47, "headline": 3.3}, "g_star": {"2026": 1.0}, "history": {"headline": {"2026Q1": 2.07, "2026Q2": 3.0, "2026Q3": 3.3}, "core": {"2026Q1": 2.3, "2026Q2": 2.4, "2026Q3": 2.47}, "gdp": {"2026Q1": 0.7, "2026Q2": 1.0, "2026Q3": 1.0}}, "cpi_data": {"head_mm": [0.2036, 0.2036, 0.105, 0.2498, 0.2317, 0.8109, 0.4489, 0.0688, 0.0145, 0.4218, 0.4399, 0.5394], "core_mm": [0.206, 0.206, 0.206, 0.206, 0.206, 0.206, 0.206, 0.206, 0.206, 0.206, 0.206, 0.206], "head_yy": [1.7, 1.9, 2.6, 3.0, 3.2, 2.8, 2.9, 3.2, 3.8], "core_yy": [2.2, 2.4, 2.3, 2.2, 2.6, 2.4, 2.5, 2.4, 2.5], "weights": {"core": 0.7198, "food": 0.1898, "energy": 0.0905}}, "ranges": {"lam": [0.07, 0.25], "rho": [0.0, 0.25], "phi_pi": [0.4, 3.5], "phi_g": [0.8, 1.7]}, "scenarios": {"house_baseline": {"description": "House forecasts (October 2026 round) - German GDP 1.0, 1.1, 1.2, then 1.0; HICP 2.7, 2.5, then 2.0, read as euro-area HICP. The ECB responds to headline inflation four quarters ahead and growth two quarters ahead.", "basis": "annual_average", "gdp": {"2026": 1.0, "2027": 1.1, "2028": 1.2, "2029": 1.0, "2030": 1.0, "2031": 1.0, "2032": 1.0, "2033": 1.0, "2034": 1.0, "2035": 1.0, "2036": 1.0}, "headline": {"2026": 2.7, "2027": 2.5, "2028": 2.0, "2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "core": {"2026": 2.4, "2027": 2.6, "2028": 2.3, "2029": 2.1, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}}, "house_cpi_as_german": {"description": "As the house baseline, but the 2.7% for 2026 read as German HICP, whose first three quarters averaged 2.3, 2.7 and 3.0% - the reading under which the 2026 figure is consistent with the data.", "basis": "annual_average", "gdp": {"2026": 1.0, "2027": 1.1, "2028": 1.2, "2029": 1.0, "2030": 1.0, "2031": 1.0, "2032": 1.0, "2033": 1.0, "2034": 1.0, "2035": 1.0, "2036": 1.0}, "headline": {"2026": 2.7, "2027": 2.5, "2028": 2.0, "2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "core": {"2026": 2.4, "2027": 2.6, "2028": 2.3, "2029": 2.1, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "history": {"headline": {"2026Q1": 2.3, "2026Q2": 2.67, "2026Q3": 3.0}}, "start": {"headline": 3.0}}, "house_hicp_monthly": {"description": "Euro-area HICP built month by month - energy up 3% in October with oil, then falling 7% a year through 2027 (roughly the futures curve), core 2.5% rising to 2.6% then 2.3%, food 2.0%. Gives 3.1, 2.5, 2.0, with headline dipping to about 1.5% at end-2027. House GDP.", "basis": "annual_average", "gdp": {"2026": 1.0, "2027": 1.1, "2028": 1.2, "2029": 1.0, "2030": 1.0, "2031": 1.0, "2032": 1.0, "2033": 1.0, "2034": 1.0, "2035": 1.0, "2036": 1.0}, "headline": {"2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "core": {"2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "cpi_builder": {"core_q4_26": 2.5, "core_end27": 2.6, "core_end28": 2.3, "energy27": -7.0, "energy28": 2.0, "food": 2.0, "energy_jump": 3.0}}, "house_core_reactive": {"description": "As the monthly HICP path, but the ECB responds to projected core HICP rather than headline - it looks through the 2027 energy base effects.", "basis": "annual_average", "gdp": {"2026": 1.0, "2027": 1.1, "2028": 1.2, "2029": 1.0, "2030": 1.0, "2031": 1.0, "2032": 1.0, "2033": 1.0, "2034": 1.0, "2035": 1.0, "2036": 1.0}, "headline": {"2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "core": {"2029": 2.0, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "cpi_builder": {"core_q4_26": 2.5, "core_end27": 2.6, "core_end28": 2.3, "energy27": -7.0, "energy28": 2.0, "food": 2.0, "energy_jump": 3.0}, "overrides": {"theta": 1.0}}, "oil_stays_high": {"description": "Brent stays near $115 - energy up 3% in October and flat through 2027, second-round effects lift core to 2.9%, German growth weaker (0.8% in 2027).", "basis": "annual_average", "gdp": {"2026": 1.0, "2027": 0.8, "2028": 1.1, "2029": 1.0, "2030": 1.0, "2031": 1.0, "2032": 1.0, "2033": 1.0, "2034": 1.0, "2035": 1.0, "2036": 1.0}, "headline": {"2029": 2.1, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "core": {"2029": 2.1, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "cpi_builder": {"core_q4_26": 2.6, "core_end27": 2.9, "core_end28": 2.4, "energy27": 0.0, "energy28": 2.0, "food": 2.5, "energy_jump": 3.0}}, "energy_recession": {"description": "Demand shock - German GDP falls 0.3% in 2027, oil falls back sharply (energy -20% a year through 2027), core eases to 1.8%.", "basis": "annual_average", "gdp": {"2026": 1.0, "2027": -0.3, "2028": 0.8, "2029": 1.5, "2030": 1.2, "2031": 1.0, "2032": 1.0, "2033": 1.0, "2034": 1.0, "2035": 1.0, "2036": 1.0}, "headline": {"2029": 1.8, "2030": 1.9, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "core": {"2029": 1.8, "2030": 1.9, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "cpi_builder": {"core_q4_26": 2.4, "core_end27": 1.8, "core_end28": 1.8, "energy27": -20.0, "energy28": 2.0, "food": 1.5, "energy_jump": 0.0}}, "fiscal_upswing": {"description": "German fiscal package delivers more - GDP 1.0, 1.6, 1.7, 1.3 then 1.0; monthly HICP path with core 0.2pp firmer.", "basis": "annual_average", "gdp": {"2026": 1.0, "2027": 1.6, "2028": 1.7, "2029": 1.3, "2030": 1.0, "2031": 1.0, "2032": 1.0, "2033": 1.0, "2034": 1.0, "2035": 1.0, "2036": 1.0}, "headline": {"2029": 2.1, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "core": {"2029": 2.1, "2030": 2.0, "2031": 2.0, "2032": 2.0, "2033": 2.0, "2034": 2.0, "2035": 2.0, "2036": 2.0}, "cpi_builder": {"core_q4_26": 2.6, "core_end27": 2.8, "core_end28": 2.5, "energy27": -7.0, "energy28": 2.0, "food": 2.0, "energy_jump": 3.0}}}, "meta": {"pretty": {"house_baseline": "House forecasts (EA HICP history)", "house_cpi_as_german": "House, CPI read as German HICP", "house_hicp_monthly": "Euro-area HICP built monthly", "house_core_reactive": "House, ECB reacts to core", "oil_stays_high": "Oil stays near $115", "energy_recession": "Energy-led recession", "fiscal_upswing": "German fiscal upswing"}, "bench": {"2027Q2": 3.0, "2028Q2": 3.0}, "bench_label": "ECB staff rate assumption (3m Euribor, annual avg.)", "price": "HICP", "gdp_label": "German GDP", "point_rate": true, "lead_slider": true, "rate_phrase": "the deposit facility rate", "stance_hint": "ECB's own target minus ours today, pp", "builder_default": {"core_q4_26": 2.5, "core_end27": 2.6, "core_end28": 2.3, "energy27": -7.0, "energy28": 2.0, "food": 2.0, "energy_jump": 3.0}, "builder_fields": [["core_q4_26", "Core, Q4-26"], ["core_end27", "Core, end-27"], ["core_end28", "Core, end-28"], ["energy_jump", "Energy, Oct-26 jump"], ["energy27", "Energy, to end-27"], ["energy28", "Energy, 2028"], ["food", "Food"]], "builder_note": "Core and food: annualised momentum, %. Energy: one-off change in October 2026 (%), then annualised rate. Oil flat means energy 0."}};
+const RANGES = {"lam": [0.07, 0.25], "rho": [0.0, 0.25], "phi_pi": [0.4, 3.5], "phi_g": [0.8, 1.7]};
+const META = CFG.meta || {};
+const fmtR = v => Math.abs(v * 100 - Math.round(v * 100)) < 1e-9 ? v.toFixed(2) : v.toFixed(3);
+const BENCH = META.bench || {};
+const PRICE = META.price || "CPI";
+const CPIDATA = CFG.cpi_data || null;
+const cpiB = b => CashPath.cpiBuild(b, CPIDATA);
+const names = Object.keys(CFG.scenarios);
+const YEARS = [2026, 2027, 2028, 2029, 2030];
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const label = k => k.replace(/_/g, " ").replace(/^./, c => c.toUpperCase()).replace("2027", "2027").replace("3 2", "3.2");
+const NS = "http://www.w3.org/2000/svg";
+const PRETTY = META.pretty || {};
+const pretty = n => PRETTY[n] || label(n);
+
+let state;
+function loadScenario(n){
+  const s = CFG.scenarios[n], p = Object.assign({}, CFG.params, s.overrides || {});
+  const yv = (d, y) => d && d[y] != null ? d[y] : null;
+  const lrOf = d => yv(d, 2031) ?? yv(d, 2030) ?? p.pi_star;
+  state = { name: n, params: p, mode: s.cpi_builder ? "builder" : "annual",
+    builder: Object.assign({}, META.builder_default || { core_q4_26: 2.8, core_end27: 2.7, core_end28: 2.6, energy27: 0, energy28: 2.5, food: 2.8 }, s.cpi_builder || {}),
+    gdp: {}, headline: {}, core: {}, g_star: Object.values(s.g_star || CFG.g_star).slice(-1)[0] ?? 2.0 };
+  YEARS.forEach(y => { state.gdp[y] = yv(s.gdp, y); state.headline[y] = yv(s.headline, y); state.core[y] = yv(s.core, y); });
+  state.gdp.lr = lrOf(s.gdp) ?? state.g_star; state.headline.lr = lrOf(s.headline); state.core.lr = lrOf(s.core);
+  if (state.mode === "builder") { const b = cpiB(state.builder); [2026, 2027, 2028].forEach(y => { state.headline[y] = +b.headline.annual[y].toFixed(2); state.core[y] = +b.core.annual[y].toFixed(2); }); }
+}
+function scFromState(st){
+  const full = v => { const d = {}; for (let y = 2026; y <= 2036; y++) { const x = y <= 2030 ? st[v][y] : st[v].lr; if (x != null && !isNaN(x)) d[y] = x; } return d; };
+  const scn = CFG.scenarios[st.name] || {};
+  const sc = { start: Object.assign({}, CFG.start, scn.start || {}), history: Object.assign({}, CFG.history, scn.history || {}), basis: "annual_average", g_star: { 2026: st.g_star }, gdp: full("gdp") };
+  if (st.mode === "builder") {
+    const b = cpiB(st.builder), q = {};
+    ["headline", "core"].forEach(v => { q[v] = {}; Object.entries(b[v].quarterly).forEach(([k, val]) => { if (k >= "2026Q4") q[v][k] = val; });
+      sc[v] = {}; for (let y = 2029; y <= 2036; y++) sc[v][y] = y <= 2030 ? st[v][y] : st[v].lr; });
+    sc.quarterly = q;
+  } else { sc.headline = full("headline"); sc.core = full("core"); const q0 = (CFG.scenarios[st.name] || {}).quarterly; if (q0) sc.quarterly = q0; }
+  return sc;
+}
+function stateFor(n){ const save = state; loadScenario(n); const st = state; state = save; return st; }
+function run(st, pOver){ return CashPath.simulate(scFromState(st), Object.assign({}, st.params, pOver || {}), 41); }
+
+/* ---------- charts ---------- */
+function el(tag, attrs, parent){ const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function niceTicks(lo, hi, n){ const span = hi - lo || 1, raw = span / n, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1,2,2.5,5,10].map(m => m*mag).find(s => s >= raw) || raw; const t = [];
+  for (let v = Math.ceil(lo/step)*step; v <= hi + 1e-9; v += step) t.push(+v.toFixed(6)); return { t, lo: Math.floor(lo/step)*step, hi: Math.ceil(hi/step)*step }; }
+function drawChart(hostId, labels, series, opts){
+  opts = opts || {}; const host = document.getElementById(hostId); host.innerHTML = "";
+  const W = host.parentElement.clientWidth || 700, H = (host.parentElement.clientHeight || 300) - (opts.legend ? 28 : 0), m = { l: 40, r: 12, t: 10, b: 24 };
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H }, host);
+  let vals = []; series.forEach(s => s.values.forEach(v => v != null && vals.push(v))); (opts.points || []).forEach(p => vals.push(p.v));
+  if (opts.bars) labels.forEach((_, i) => { let p = 0, n = 0; opts.bars.forEach(b => { const v = b.values[i]; v > 0 ? p += v : n += v; }); vals.push(p, n); });
+  if (opts.zero) vals.push(0);
+  let lo = Math.min(...vals), hi = Math.max(...vals);
+  if (opts.minSpan && hi - lo < opts.minSpan) { const mid = (hi + lo) / 2; lo = mid - opts.minSpan / 2; hi = mid + opts.minSpan / 2; }
+  const yt = niceTicks(lo, hi, 5), xs = opts.xNumeric;
+  const X = i => m.l + (W - m.l - m.r) * (i + 0.5) / labels.length, Y = v => m.t + (H - m.t - m.b) * (yt.hi - v) / (yt.hi - yt.lo || 1);
+  yt.t.forEach(v => { el("line", { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: css("--rule"), "stroke-width": v === 0 ? 1.2 : 0.6 }, svg);
+    const tx = el("text", { x: m.l - 6, y: Y(v) + 3.5, "text-anchor": "end" }, svg); tx.textContent = Math.abs(v) < 1 && v !== 0 ? v.toFixed(2) : v.toFixed(1); });
+  labels.forEach((l, i) => { const show = xs ? (i % 4 === 0) : l.endsWith("Q4"); if (show) { const tx = el("text", { x: X(i), y: H - 6, "text-anchor": "middle" }, svg); tx.textContent = xs ? l : l.slice(0, 4); } });
+  if (opts.bars) { const bw = (W - m.l - m.r) / labels.length * 0.72;
+    labels.forEach((_, i) => { let p = 0, n = 0; opts.bars.forEach(b => { const v = b.values[i]; if (!v) return;
+      const y0 = v > 0 ? p : n, y1 = y0 + v; v > 0 ? p = y1 : n = y1;
+      el("rect", { x: X(i) - bw/2, y: Math.min(Y(y0), Y(y1)), width: bw, height: Math.max(0.5, Math.abs(Y(y0) - Y(y1))), fill: b.color }, svg); }); }); }
+  series.forEach(s => { let d = "", pen = false, last = null; s.values.forEach((v, i) => { if (v == null) { pen = false; return; }
+      if (pen && s.step && last != null && v !== last) d += "L" + X(i).toFixed(1) + "," + Y(last).toFixed(1);
+      d += (pen ? "L" : "M") + X(i).toFixed(1) + "," + Y(v).toFixed(1); pen = true; last = v; });
+    el("path", { d, fill: "none", stroke: s.color, "stroke-width": s.width || 1.6, "stroke-dasharray": s.dash || "", "stroke-linejoin": "round" }, svg); });
+  (opts.points || []).forEach(p => { el("circle", { cx: X(p.i), cy: Y(p.v), r: 4, fill: p.color, stroke: css("--paper"), "stroke-width": 1.2 }, svg); });
+  if (opts.legend) { const lg = document.createElement("div"); lg.className = "legend";
+    lg.innerHTML = series.filter(s => s.label).map(s => `<span style="--sw:${s.color}">${s.label}</span>`).join("") + (opts.points && opts.points.length ? `<span style="--sw:${opts.points[0].color}">${opts.pointLabel}</span>` : ""); host.appendChild(lg); }
+  const tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; host.style.position = "relative"; host.appendChild(tip);
+  const guide = el("line", { y1: m.t, y2: H - m.b, stroke: css("--muted"), "stroke-width": 0.6, visibility: "hidden" }, svg);
+  svg.addEventListener("mousemove", e => { const r = svg.getBoundingClientRect(); const x = (e.clientX - r.left) * W / r.width;
+    const i = Math.max(0, Math.min(labels.length - 1, Math.round((x - m.l) / ((W - m.l - m.r) / labels.length) - 0.5)));
+    guide.setAttribute("x1", X(i)); guide.setAttribute("x2", X(i)); guide.setAttribute("visibility", "visible");
+    const items = (opts.bars ? opts.bars.concat(series) : series).filter(s => s.label && s.values[i] != null).map(s => `${s.label}: ${(+s.values[i]).toFixed(2)}`);
+    tip.innerHTML = `<b>${labels[i]}</b><br>` + items.join("<br>"); tip.hidden = false;
+    tip.style.left = Math.max(0, Math.min((X(i) / W) * r.width + 10, r.width - tip.offsetWidth - 4)) + "px"; tip.style.top = "6px"; });
+  svg.addEventListener("mouseleave", () => { tip.hidden = true; guide.setAttribute("visibility", "hidden"); });
+}
+
+/* ---------- controls ---------- */
+const sel = document.getElementById("scn");
+names.forEach(n => { const o = document.createElement("option"); o.value = n; o.textContent = pretty(n); sel.appendChild(o); });
+const SL = [
+  ["lam", "Adjustment speed <i>λ</i>", 0.05, 0.6, 0.01, "share of gap to target closed per quarter"],
+  ["rho", "Momentum <i>ρ</i>", 0, 0.7, 0.01, "share of last quarter's change carried forward"],
+  ["phi_pi", "Inflation response <i>φ</i><sub>π</sub>", 0, 2, 0.05, "long-run response is 1 + φπ"],
+  ["phi_g", "Growth response <i>φ</i><sub>g</sub>", 0, 2, 0.05, "response to growth minus potential"],
+  ["theta", "Look-through <i>θ</i>", 0, 1, 0.05, "1 = core, 0 = headline"],
+  ["stance_gap0", "Starting stance <i>s</i><sub>0</sub>", -1.5, 1.5, 0.05, META.stance_hint || "Fed's own target minus ours today, pp"],
+].concat(META.lead_slider ? [["lead_q", "Inflation lead <i>k</i><sub>π</sub>", 0, 8, 1, "quarters ahead of the inflation forecast the rule uses"], ["lead_g_q", "Growth lead <i>k</i><sub>g</sub>", 0, 8, 1, "quarters ahead of the growth forecast the rule uses"]] : []);
+const box = document.getElementById("sliders");
+SL.forEach(([k, nm, lo, hi, st, hint]) => {
+  const d = document.createElement("div"); d.className = "slider"; const r = RANGES[k];
+  if (r && r[1] > hi) hi = Math.ceil(r[1] * 1.15);
+  const band = r ? `<div class="lit" style="left:${(r[0]-lo)/(hi-lo)*100}%;width:${(r[1]-r[0])/(hi-lo)*100}%"></div>` : "";
+  d.innerHTML = `<span class="name">${nm}</span><output id="o_${k}"></output><div class="track">${band}<input type="range" id="s_${k}" min="${lo}" max="${hi}" step="${st}" aria-label="${k}"></div><span class="hint">${hint}${r ? ` · evidence ${r[0]}–${r[1]}` : ""}</span>`;
+  box.appendChild(d);
+  d.querySelector("input").addEventListener("input", e => { state.params[k] = +e.target.value; render(); });
+});
+const BLD = META.builder_fields || [["core_q4_26","Core, Q4-26"],["core_end27","Core, end-27"],["core_end28","Core, end-28"],["energy27","Energy, to end-27"],["energy28","Energy, 2028"],["food","Food"]];
+document.getElementById("builder").innerHTML = BLD.map(([k, n]) => `<div><label for="b_${k}">${n}</label><input type="number" step="0.1" id="b_${k}"></div>`).join("") + `<p class="note" style="grid-column:1/-1;margin:0">${META.builder_note || "Annualised monthly momentum, %. Oil flat means energy 0."}</p>`;
+BLD.forEach(([k]) => document.getElementById("b_" + k).addEventListener("change", e => { const v = parseFloat(e.target.value); if (!isNaN(v)) state.builder[k] = v; syncBuilderAnnual(); renderInputs(); render(); }));
+function syncBuilderAnnual(){ if (state.mode !== "builder") return; const b = cpiB(state.builder); [2026, 2027, 2028].forEach(y => { state.headline[y] = +b.headline.annual[y].toFixed(2); state.core[y] = +b.core.annual[y].toFixed(2); }); }
+if (META.no_builder) { document.getElementById("mBuild").parentElement.hidden = true; const h = document.getElementById("mBuild").parentElement.previousElementSibling; if (h) h.hidden = true; }
+function setMode(m){ state.mode = m; if (m === "builder") syncBuilderAnnual(); document.getElementById("mBuild").classList.toggle("on", m === "builder"); document.getElementById("mAnn").classList.toggle("on", m === "annual");
+  document.getElementById("builder").hidden = m !== "builder"; renderInputs(); render(); }
+document.getElementById("mBuild").addEventListener("click", () => setMode("builder"));
+document.getElementById("mAnn").addEventListener("click", () => setMode("annual"));
+[["a_anchor","anchor_nominal"],["a_pi","pi_star"]].forEach(([id, k]) => document.getElementById(id).addEventListener("change", e => { const v = parseFloat(e.target.value); if (!isNaN(v)) { state.params[k] = v; render(); } }));
+document.getElementById("a_g").addEventListener("change", e => { const v = parseFloat(e.target.value); if (!isNaN(v)) { state.g_star = v; render(); } });
+
+function renderInputs(){
+  const t = document.getElementById("inputs"), rowsY = YEARS.concat(["lr"]), VARS = [["gdp", META.gdp_label || "Real GDP"],["headline","Headline " + PRICE],["core","Core " + PRICE]];
+  let h = `<tr><th>Year</th>${VARS.map(([, nm]) => `<th>${nm}</th>`).join("")}</tr>`;
+  rowsY.forEach(y => {
+    h += `<tr><td>${y === "lr" ? "2031+" : y}</td>` + VARS.map(([v, nm]) => { const ro = state.mode === "builder" && v !== "gdp" && [2026, 2027, 2028].includes(y);
+      const val = state[v][y]; return `<td><input type="number" step="0.1" id="in_${v}_${y}" value="${val == null ? "" : (+val).toFixed(ro ? 2 : 1)}" ${ro ? "readonly title=\"From the CPI builder\"" : ""} aria-label="${nm} ${y === "lr" ? "2031 onwards" : y}"></td>`; }).join("") + `</tr>`;
+  });
+  t.innerHTML = h;
+  document.getElementById("roNote").textContent = state.mode === "builder" ? "Dashed cells for headline and core in 2026–2028 come from the " + PRICE + " builder." : "";
+  t.querySelectorAll("input:not([readonly])").forEach(inp => inp.addEventListener("change", () => {
+    const [, v, y] = inp.id.split("_"); const val = parseFloat(inp.value); if (isNaN(val)) return; state[v][y === "lr" ? "lr" : +y] = val; render(); }));
+}
+function syncControls(){
+  const p = state.params;
+  SL.forEach(([k]) => { document.getElementById("s_" + k).value = p[k] ?? 0; document.getElementById("o_" + k).textContent = (k === "lead_q" || k === "lead_g_q") ? String(p[k] ?? 0) : (+(p[k] ?? 0)).toFixed(2); });
+  BLD.forEach(([k]) => document.getElementById("b_" + k).value = state.builder[k]);
+  document.getElementById("a_anchor").value = p.anchor_nominal; document.getElementById("a_pi").value = p.pi_star; document.getElementById("a_g").value = state.g_star;
+  document.getElementById("mBuild").classList.toggle("on", state.mode === "builder"); document.getElementById("mAnn").classList.toggle("on", state.mode === "annual");
+  document.getElementById("builder").hidden = state.mode !== "builder";
+  document.getElementById("steps").classList.toggle("on", p.step > 0); document.getElementById("steps").textContent = p.step > 0 ? "25bp steps on" : "25bp steps off";
+}
+let compare = false;
+sel.addEventListener("change", () => { loadScenario(sel.value); syncControls(); renderInputs(); render(); });
+document.getElementById("reset").addEventListener("click", () => { loadScenario(sel.value); syncControls(); renderInputs(); render(); });
+document.getElementById("steps").addEventListener("click", () => { state.params.step = state.params.step > 0 ? 0 : 0.25; syncControls(); render(); });
+document.getElementById("showAll").addEventListener("click", e => { compare = !compare; e.target.classList.toggle("on", compare); render(); });
+
+/* ---------- outputs ---------- */
+const rng = v => { const p = state.params; if (!(p.step > 0) || META.point_rate) return v.toFixed(2); const k = (v - (p.grid_base == null ? p.elb : p.grid_base)) / p.step; return Math.abs(k - Math.round(k)) < 1e-6 ? `${(v - p.step/2).toFixed(2)}–${(v + p.step/2).toFixed(2)}` : v.toFixed(2); };
+function summary(rows){
+  const ye = y => rows.find(r => r.quarter === y + "Q4").rate;
+  const inf10 = rows.slice(0, 40).reduce((s, r) => s + r.headline, 0) / 40;
+  return { ye26: ye(2026), ye27: ye(2027), ye28: ye(2028), ye29: ye(2029), a5: CashPath.horizonAverage(rows, 5), a10: CashPath.horizonAverage(rows, 10),
+    r10: CashPath.horizonAverage(rows, 10) - inf10, peak: Math.max(...rows.slice(0, 13).map(r => r.rate)), trough: Math.min(...rows.slice(0, 13).map(r => r.rate)),
+    moves: rows.slice(0, 13).reduce((a, r) => a + Math.round(Math.abs(r.move || 0) / 0.25), 0) };
+}
+function irf(p){
+  const out = { anchor: [], infl: [], gro: [] }, N = 20;
+  const sim = (x0, inf, gro) => { let x = x0, d = 0; const v = [];
+    for (let t = 0; t < N; t++) { const dd = p.rho * d + p.lam * (-x + (1 + p.phi_pi) * (t < 4 ? inf : 0) + p.phi_g * (t < 4 ? gro : 0)); x += dd; d = dd; v.push(x); } return v; };
+  out.anchor = sim(1, 0, 0); out.infl = sim(0, 1, 0); out.gro = sim(0, 0, 1); return out;
+}
+function render(){
+  const p = state.params, res = run(state), rows = res.rows, s = summary(rows), labels = rows.map(r => r.quarter);
+  document.getElementById("scnDesc").textContent = CFG.scenarios[state.name].description || "";
+  syncControls();
+  // KPIs
+  document.getElementById("kpis").innerHTML = [["YE 2026", rng(s.ye26)], ["YE 2027", rng(s.ye27)], ["YE 2028", rng(s.ye28)], ["5y avg", s.a5.toFixed(2), 1], ["10y avg", s.a10.toFixed(2), 1], ["10y avg real", s.r10.toFixed(2)], ["Peak to 2029", s.peak.toFixed(2)], ["25bp moves to 2029", s.moves]]
+    .map(([k, v, hl]) => `<div class="kpi${hl ? " hl" : ""}"><div class="k">${k}</div><div class="v">${v}</div></div>`).join("");
+  // Fig 1
+  const ser = [];
+  if (compare) names.filter(n => n !== state.name).forEach((n, k) => { const st = stateFor(n); st.params = Object.assign({}, st.params, { lam: p.lam, rho: p.rho, phi_pi: p.phi_pi, phi_g: p.phi_g, step: p.step, anchor_nominal: p.anchor_nominal, pi_star: p.pi_star, lead_q: p.lead_q || 0, lead_g_q: p.lead_g_q || 0 }, CFG.scenarios[n].overrides || {});
+    ser.push({ label: pretty(n), values: run(st).rows.map(r => r.rate), color: css("--muted"), width: 1, dash: (2 + k) + " 3", step: true }); });
+  ser.push({ label: "Anchor " + fmtR(p.anchor_nominal), values: rows.map(() => p.anchor_nominal), color: css("--anchor"), width: 1.3, dash: "6 4" });
+  if (p.step > 0) ser.push({ label: "Intended", values: rows.map(r => r.notional), color: css("--accent"), width: 1.1, dash: "3 3" });
+  ser.push({ label: pretty(state.name), values: rows.map(r => r.rate), color: css("--accent"), width: 2.8, step: true });
+  const pts = Object.entries(BENCH).map(([q, v]) => ({ i: labels.indexOf(q), v, color: css("--sep") })).filter(x => x.i >= 0);
+  drawChart("fig1", labels, ser, { legend: true, minSpan: 2, points: pts, pointLabel: META.bench_label || "Benchmark" });
+  const d = CashPath.diagnostics(p);
+  document.getElementById("diag").innerHTML = [`<span class="flag">Half-life with gaps closed: ${d.halfLifeQ} quarters</span>`,
+    1 + p.phi_pi > 1 ? `<span class="flag ok">Long-run inflation response ${(1 + p.phi_pi).toFixed(2)}</span>` : `<span class="flag warn">Long-run inflation response ${(1 + p.phi_pi).toFixed(2)}: fails Taylor principle</span>`,
+    d.stable ? "" : `<span class="flag warn">Unstable parameters</span>`,
+    Math.abs(state.headline.lr - p.pi_star) > 0.001 || Math.abs(state.core.lr - p.pi_star) > 0.001 ? `<span class="flag warn">Long-run inflation input ≠ π*: path will not settle at the anchor</span>` : "",
+    Math.abs(state.gdp.lr - state.g_star) > 0.001 ? `<span class="flag warn">Long-run growth ≠ potential: path will not settle at the anchor</span>` : "",
+    rows.some(r => r.notional < p.elb) ? `<span class="flag warn">${rows.filter(r => r.notional < p.elb).length} quarters at the lower bound</span>` : ""].join("");
+  // Fig 2
+  drawChart("fig2", labels, [{ label: "Total", values: rows.map(r => r.change), color: css("--ink"), width: 1.2 }], { zero: true, bars: [
+    { label: "Momentum", values: rows.map(r => r.c_momentum), color: css("--c-mom") }, { label: "Pull to anchor", values: rows.map(r => r.c_pull), color: css("--c-pull") },
+    { label: "Inflation gap", values: rows.map(r => r.c_inflation), color: css("--c-inf") }, { label: "Growth gap", values: rows.map(r => r.c_growth), color: css("--c-gro") },
+    { label: "Starting stance", values: rows.map(r => r.c_stance), color: css("--c-stn") }] });
+  // Fig 3 with observed 2026 quarters
+  const hq = Object.keys((CFG.history || {}).headline || {}).sort(), L3 = hq.concat(labels);
+  const HS = Object.assign({}, CFG.history, (CFG.scenarios[state.name] || {}).history || {});
+  const pre = v => hq.map(q => (HS[v] || {})[q] ?? null);
+  drawChart("fig3", L3, [
+    { label: "Headline " + PRICE, values: pre("headline").concat(rows.map(r => r.headline)), color: css("--c-mom"), width: 1.6 },
+    { label: "Core " + PRICE, values: pre("core").concat(rows.map(r => r.core)), color: css("--c-inf"), width: 2 },
+    { label: META.gdp_label || "Real GDP", values: pre("gdp").concat(rows.map(r => r.gdp)), color: css("--c-gro"), width: 1.8 },
+    { label: "π*", values: L3.map(() => p.pi_star), color: css("--anchor"), width: 1, dash: "6 4" },
+    { label: "g*", values: L3.map(() => state.g_star), color: css("--c-gro"), width: 1, dash: "3 3" }], { legend: true, zero: true });
+  // Fig 4
+  const ir = irf(p), L4 = Array.from({ length: 20 }, (_, i) => "Q" + (i + 1));
+  drawChart("fig4", L4, [{ label: "Start 1pp above anchor", values: ir.anchor, color: css("--accent"), width: 2 },
+    { label: "1pp core gap, 4 quarters", values: ir.infl, color: css("--c-gro"), width: 2 },
+    { label: "1pp growth gap, 4 quarters", values: ir.gro, color: css("--anchor"), width: 2 }], { legend: true, zero: true, xNumeric: true });
+  // live text
+  document.getElementById("ab5").textContent = s.a5.toFixed(2); document.getElementById("ab10").textContent = s.a10.toFixed(2);
+  document.getElementById("anc1").textContent = fmtR(p.anchor_nominal); document.getElementById("anc2").textContent = p.pi_star.toFixed(1);
+  document.getElementById("hl").textContent = d.halfLifeQ;
+  const cb = cpiB(state.builder);
+  const setT = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+  setT("b26", cb.headline.annual[2026].toFixed(1)); setT("b27", cb.headline.annual[2027].toFixed(1)); setT("b28", cb.headline.annual[2028].toFixed(1));
+  setT("c27", cb.core.annual[2027].toFixed(1));
+  const peakQ = rows.slice(0, 13).reduce((a, r) => r.rate > a.rate ? r : a, rows[0]);
+  document.getElementById("resText").innerHTML = `For the selected scenario (<b>${pretty(state.name)}</b>), ${META.rate_phrase || "the funds rate"} is ${rng(s.ye26)}% at end-2026, ${rng(s.ye27)}% at end-2027 and ${rng(s.ye28)}% at end-2028, peaking at ${s.peak.toFixed(META.point_rate ? 2 : 3)}% in ${peakQ.quarter} with ${s.moves} quarter-point moves to end-2029. It averages <span class="live">${s.a5.toFixed(2)}</span>% over five years and <span class="live">${s.a10.toFixed(2)}</span>% over ten, a real return of about ${s.r10.toFixed(2)}% against headline ${PRICE}. Table 1 runs every scenario under the same parameters.`;
+  // scenario table
+  let h = `<tr><th>Scenario</th><th>YE 2026</th><th>YE 2027</th><th>YE 2028</th><th>Peak</th><th>5y avg</th><th>10y avg</th></tr>`;
+  names.forEach(n => { const st = n === state.name ? state : stateFor(n);
+    if (n !== state.name) st.params = Object.assign({}, st.params, { lam: p.lam, rho: p.rho, phi_pi: p.phi_pi, phi_g: p.phi_g, step: p.step, anchor_nominal: p.anchor_nominal, pi_star: p.pi_star, stance_gap0: p.stance_gap0, lead_q: p.lead_q || 0, lead_g_q: p.lead_g_q || 0 }, CFG.scenarios[n].overrides || {});
+    const z = summary(run(st).rows);
+    h += `<tr${n === state.name ? ' class="chosen"' : ""}><td>${pretty(n)}</td><td class="num">${rng(z.ye26)}</td><td class="num">${rng(z.ye27)}</td><td class="num">${rng(z.ye28)}</td><td class="num">${z.peak.toFixed(2)}</td><td class="num">${z.a5.toFixed(2)}</td><td class="num">${z.a10.toFixed(2)}</td></tr>`; });
+  document.getElementById("scnTable").innerHTML = `<caption class="note" style="caption-side:top;text-align:left;padding-bottom:4px">Table 1. Scenarios under current parameters</caption>` + h;
+  // sensitivity table
+  const sens = [["Central", {}], ["λ = " + RANGES.lam[0], { lam: RANGES.lam[0] }], ["λ = " + RANGES.lam[1], { lam: RANGES.lam[1] }], ["ρ = " + RANGES.rho[0], { rho: RANGES.rho[0] }], ["ρ = " + RANGES.rho[1], { rho: RANGES.rho[1] }],
+    ["1+φπ = " + (1 + RANGES.phi_pi[0]).toFixed(1), { phi_pi: RANGES.phi_pi[0] }], ["1+φπ = " + (1 + RANGES.phi_pi[1]).toFixed(1), { phi_pi: RANGES.phi_pi[1] }],
+    ["φg = " + RANGES.phi_g[0], { phi_g: RANGES.phi_g[0] }], ["φg = " + RANGES.phi_g[1], { phi_g: RANGES.phi_g[1] }],
+    ["θ = 1 (core)", { theta: 1 }], ["θ = 0 (headline)", { theta: 0 }],
+    ...(META.lead_slider ? [["Leads 0 (current data)", { lead_q: 0, lead_g_q: 0 }], ["Inflation lead 2", { lead_q: 2 }], ["Inflation lead 6", { lead_q: 6 }]] : []),
+    ["Anchor −25bp", { anchor_nominal: p.anchor_nominal - 0.25 }], ["Anchor +25bp", { anchor_nominal: p.anchor_nominal + 0.25 }], ["No 25bp steps", { step: 0 }]];
+  const base = summary(rows);
+  let t = `<tr><th>Setting</th><th>YE 2027</th><th>Peak</th><th>5y avg</th><th>10y avg</th><th>Δ 10y, bp</th></tr>`;
+  sens.forEach(([nm, ov]) => { const z = summary(run(state, ov).rows); t += `<tr${nm === "Central" ? ' class="chosen"' : ""}><td>${nm}</td><td class="num">${rng(z.ye27)}</td><td class="num">${z.peak.toFixed(2)}</td><td class="num">${z.a5.toFixed(2)}</td><td class="num">${z.a10.toFixed(2)}</td><td class="num">${Math.round((z.a10 - base.a10) * 100)}</td></tr>`; });
+  document.getElementById("sensTable").innerHTML = t;
+}
+loadScenario(names[0]); syncControls(); renderInputs(); render();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 150); });
+
+</script>
+
+</body></html>
